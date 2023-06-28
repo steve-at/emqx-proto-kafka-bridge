@@ -32,10 +32,10 @@ defmodule ProtoKafkaBridge do
       {"Authorization", "Basic #{schema_registry_auth_token}"}
     ]
 
-    schema_registry_uri = Application.get_env(:proto_kafka_bridge, :schema_registry) <> "/schemas"
+    schema_registry_uri = Application.get_env(:proto_kafka_bridge, :schema_registry)
 
     options = %{
-      schema_registry_uri: schema_registry_uri,
+      schema_registry_uri: schema_registry_uri <> "/schemas",
       http_opts: opts,
       wrong_schema_topic_postfix: Application.get_env(:proto_kafka_bridge, :wrong_schema_topic_postfix),
       use_schema_registry: Application.get_env(:proto_kafka_bridge, :use_schema_registry),
