@@ -30,5 +30,4 @@ config :proto_kafka_bridge,
   schema_registry: System.get_env("SCHEMA_REGISTRY_URL") ||"localhost:8081",
   schema_registry_user: System.get_env("SCHEMA_REGISTRY_USER") || "basic-auth-user",
   schema_registry_password: System.get_env("SCHEMA_REGISTRY_PASSWORD") || "basic-auth-pass",
-  wrong_schema_topic_postfix: "no-schema"
-ß
+  wrong_schema_topic_postfix: System.get_env("MISSING_SCHEMA_POSTFIX") || "no-schema"

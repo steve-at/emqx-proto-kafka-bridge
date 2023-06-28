@@ -19,7 +19,7 @@ defmodule ProtoKafkaBridge.SchemaRegistry.SchemaRegistryService do
   def build_prefix(id) do
 
     # first byte is Magic byte, then 4 bytes for the id and a last one for an index
-    <<0, id::size(32), 0>>
+    <<0, id::size(32)>>
   end
 
 
@@ -74,36 +74,6 @@ defmodule ProtoKafkaBridge.SchemaRegistry.SchemaRegistryService do
 
     {:ok, message_canidates, schema["id"]}
 
-    # At.
-    # schema_as_string = schema |> Map.get("schema")
-    # id_canidate = schema |> Map.get("id")
-
-    # contains_all_fields =
-    #   Map.delete(msg, :__struct__)
-    #   |> Map.keys()
-    #   |> Enum.map(fn key -> String.contains?(schema_as_string, Atom.to_string(key)) end)
-    #   |> Enum.member?(false)
-    # if contains_all_fields == false do
-    #   id_canidate
-    # else
-    #   Logger.error("The schema does not match the topics schema")
-    #   0
-    # end
   end
 
-  # def get_id_by_fully_qualified_name(schemas, msg) do
-  #   subject = msg.__struct__
-
-  #   subject_as_string =
-  #     Atom.to_string(subject)
-  #     |> String.split("Elixir.")
-  #     |> Enum.at(1)
-  #     |> String.downcase()
-
-  #   schemas.body
-  #   |> Poison.decode!()
-  #   |> Enum.filter(fn e -> String.downcase(e["subject"]) == subject_as_string end)
-  #   |> Enum.max_by(fn(schema) -> schema["version"] end)
-  #   |> Map.get("id")
-  # end
 end
