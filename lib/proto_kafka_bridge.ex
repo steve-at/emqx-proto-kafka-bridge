@@ -1,9 +1,10 @@
 defmodule ProtoKafkaBridge do
   use GenServer
-
+  require Logger
   @moduledoc """
   A dummy example server
   """
+alias ElixirSense.Log
 
   def start_link() do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
@@ -33,6 +34,9 @@ defmodule ProtoKafkaBridge do
     ]
 
     schema_registry_uri = Application.get_env(:proto_kafka_bridge, :schema_registry)
+    Logger.info("Schema registry uri: #{schema_registry_uri}")
+    Logger.info("Schema registry user: #{schema_registry_user}")
+    # Logger.info("Schema registry password: #{schema_registry_password}")
 
     options = %{
       schema_registry_uri: schema_registry_uri <> "/schemas",
