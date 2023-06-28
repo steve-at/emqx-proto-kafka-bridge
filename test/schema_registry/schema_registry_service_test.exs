@@ -109,7 +109,7 @@ defmodule SchemaRegistryServiceTest do
         %{body: response},
         generate_encoded_message()
       )
-    assert prefix == <<0, 0, 0, 0, 3, 0>>
+    assert prefix == <<0, 0, 0, 0, 3>>
   end
   test "generating a prefix is working second try" do
     response = get_schema_registry_response()
@@ -120,6 +120,6 @@ defmodule SchemaRegistryServiceTest do
         %{body: response},
         At.Srfg.Cits.Beta.Srem.SREM.encode(srem)
       )
-    assert prefix == <<0, 0, 0, 0, 4, 0>>
+    assert prefix == <<0, 0, 0, 0, 4>>
   end
 end

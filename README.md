@@ -2,7 +2,8 @@
 This plugin takes received MQTT messages and forwards them to an Kafka broker. It takes the messages, looks up an Schema Registry, if there is a Schema defined for the given topic, then validats that the message is actual the required schema and produces it.
 To Work it is required, that the required Protobuf schemas are (for now) provided at build time, in form of an Elixir Module see https://github.com/elixir-protobuf/protobuf.
 
-
+## The plugin is based on the Example EMQX Elixir Plugin Template  
+https://github.com/emqx/emqx-elixir-plugin#example-emqx-elixir-plugin-template
 
 # demo usage:
    * take the plugin from the releases and add it to the broker
@@ -23,7 +24,7 @@ To Work it is required, that the required Protobuf schemas are (for now) provide
 
 
 # TODO:
-
+   * add handling if no schema registry is used
    * implement a scheduler that checks every x seconds for updated schemas, if registry is not available keep last prefix
    * implement way to add new Protobuf schemas on the fly or via make file
 
