@@ -1,0 +1,372 @@
+syntax = "proto3";
+package at.srfg.cits.beta.mapem;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.mapem";
+option java_outer_classname = "MapemMessage";
+
+message MAPEM {
+  ItsPduHeader header = 1;
+  MapData map = 2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion = 1;
+  uint32 messageID = 2;
+  uint32 stationID = 3;
+}
+message MapData {
+  uint32 timeStamp = 1;
+  uint32 msgIssueRevision = 2;
+  LayerType layerType = 3;
+  uint32 layerID = 4;
+  repeated IntersectionGeometry intersections = 5;
+  repeated RoadSegment roadSegments = 6;
+  DataParameters dataParameters = 7;
+  repeated RestrictionClassAssignment restrictionList = 8;
+  repeated Regional regional = 9;
+}
+
+
+
+enum LayerType {
+  none = 0;
+  mixedContent = 1;
+  generalMapData = 2;
+  intersectionData = 3;
+  curveData = 4;
+  roadwaySectionData = 5;
+  parkingAreaData = 6;
+  sharedLaneData = 7;
+}
+message IntersectionGeometry {
+  string name = 1;
+  IntersectionReferenceID id = 2;
+  uint32 revision = 3;
+  Position3D refPoint = 4;
+  uint32 laneWidth = 5;
+  repeated RegulatorySpeedLimit speedLimits = 6;
+  repeated GenericLane laneSet = 7;
+  repeated SignalControlZone preemptPriorityData = 8;
+  repeated Regional regional = 9;
+}
+
+
+
+message IntersectionReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+message Position3D {
+  int32 lat = 1;
+  int32 long = 2;
+  int32 elevation = 3;
+  repeated Regional regional = 4;
+}
+message Regional {
+
+}
+message RegulatorySpeedLimit {
+  Type type = 1;
+  uint32 speed = 2;
+}
+enum Type {
+  unknown = 0;
+  maxSpeedInSchoolZone = 1;
+  maxSpeedInSchoolZoneWhenChildrenArePresent = 2;
+  maxSpeedInConstructionZone = 3;
+  vehicleMinSpeed = 4;
+  vehicleMaxSpeed = 5;
+  vehicleNightMaxSpeed = 6;
+  truckMinSpeed = 7;
+  truckMaxSpeed = 8;
+  truckNightMaxSpeed = 9;
+  vehiclesWithTrailersMinSpeed = 10;
+  vehiclesWithTrailersMaxSpeed = 11;
+  vehiclesWithTrailersNightMaxSpeed = 12;
+}
+message GenericLane {
+  uint32 laneID = 1;
+  string name = 2;
+  uint32 ingressApproach = 3;
+  uint32 egressApproach = 4;
+  LaneAttributes laneAttributes = 5;
+  string maneuvers = 6;
+  oneof nodeList {
+    ComputedLane computed = 7;
+    NodeXYWrapper nodes = 8;
+  }
+
+  repeated Connection connectsTo = 9;
+  repeated uint32 overlays = 10;
+  repeated Regional regional = 11;
+}
+message NodeXYWrapper {
+  repeated NodeXY nodes = 1;
+}
+
+
+
+message LaneAttributes {
+  string directionalUse = 1;
+  string sharedWith = 2;
+  oneof laneType {
+    string bikeLane = 3;
+    string crosswalk = 4;
+    string median = 5;
+    string parking = 6;
+    string sidewalk = 7;
+    string striping = 8;
+    string trackedVehicle = 9;
+    string vehicle = 10;
+  }
+
+  Regional regional = 11;
+}
+
+
+message LaneType {
+  string bikeLane = 1;
+  string crosswalk = 2;
+  string median = 3;
+  string parking = 4;
+  string sidewalk = 5;
+  string striping = 6;
+  string trackedVehicle = 7;
+  string vehicle = 8;
+}
+message NodeList {
+  ComputedLane computed = 1;
+  repeated NodeXY nodes = 2;
+}
+
+message ComputedLane {
+  uint32 referenceLaneId = 1;
+  OffsetXaxis offsetXaxis = 2;
+  OffsetYaxis offsetYaxis = 3;
+  uint32 rotateXY = 6;
+  int32 scaleXaxis = 7;
+  int32 scaleYaxis = 8;
+  repeated Regional regional = 9;
+}
+
+message OffsetXaxis {
+  oneof offsetXaxis {
+    int32 large = 2;
+    int32 small = 3;
+  }
+}
+message OffsetYaxis {
+  oneof offsetYaxis {
+    int32 large = 4;
+    int32 small = 5;
+  }
+}
+message NodeXY {
+  oneof delta {
+    Node_LLmD_64b node_LatLon = 1;
+    Node_XY_20b node_XY1 = 2;
+    Node_XY_22b node_XY2 = 3;
+    Node_XY_24b node_XY3 = 4;
+    Node_XY_26b node_XY4 = 5;
+    Node_XY_28b node_XY5 = 6;
+    Node_XY_32b node_XY6 = 7;
+    Regional regional = 8;
+  }
+
+  NodeAttributeSetXY attributes = 9;
+}
+
+
+message Delta {
+  Node_LLmD_64b node_LatLon = 1;
+  Node_XY_20b node_XY1 = 2;
+  Node_XY_22b node_XY2 = 3;
+  Node_XY_24b node_XY3 = 4;
+  Node_XY_26b node_XY4 = 5;
+  Node_XY_28b node_XY5 = 6;
+  Node_XY_32b node_XY6 = 7;
+  Regional regional = 8;
+}
+message Node_LLmD_64b {
+  int32 lon = 1;
+  int32 lat = 2;
+}
+message Node_XY_20b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_22b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_24b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_26b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_28b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_32b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message NodeAttributeSetXY {
+  repeated LocalNode localNode = 1;
+  repeated SegmentAttributeXY disabled = 2;
+  repeated SegmentAttributeXY enabled = 3;
+  repeated LaneDataAttribute data = 4;
+  int32 dWidth = 5;
+  int32 dElevation = 6;
+  repeated Regional regional = 7;
+}
+
+
+
+message LaneDataAttribute {
+  Data data = 1;
+}
+message Data {
+  oneof data {
+    int32 laneAngle = 1;
+    int32 laneCrownPointCenter = 2;
+    int32 laneCrownPointLeft = 3;
+    int32 laneCrownPointRight = 4;
+    int32 pathEndPointAngle = 5;
+    RegionalSequence regional = 6;
+    RegulatorySpeedLimitSequence speedLimits = 7;
+  }
+}
+message RegulatorySpeedLimitSequence {
+  repeated RegulatorySpeedLimit speedLimits = 1;
+}
+enum LocalNode {
+    reserved_local_node = 0;
+  stopLine = 1;
+  roundedCapStyleA = 2;
+  roundedCapStyleB = 3;
+  mergePoint = 4;
+  divergePoint = 5;
+  downstreamStopLine = 6;
+  downstreamStartNode = 7;
+  closedToTraffic = 8;
+  safeIsland = 9;
+  curbPresentAtStepOff = 10;
+  hydrantPresent = 11;
+}
+enum SegmentAttributeXY {
+  reserved_segment_attribute_xy = 0;
+  doNotBlock = 1;
+  whiteLine = 2;
+  mergingLaneLeft = 3;
+  mergingLaneRight = 4;
+  curbOnLeft = 5;
+  curbOnRight = 6;
+  loadingzoneOnLeft = 7;
+  loadingzoneOnRight = 8;
+  turnOutPointOnLeft = 9;
+  turnOutPointOnRight = 10;
+  adjacentParkingOnLeft = 11;
+  adjacentParkingOnRight = 12;
+  adjacentBikeLaneOnLeft = 13;
+  adjacentBikeLaneOnRight = 14;
+  sharedBikeLane = 15;
+  bikeBoxInFront = 16;
+  transitStopOnLeft = 17;
+  transitStopOnRight = 18;
+  transitStopInLane = 19;
+  sharedWithTrackedVehicle = 20;
+  safeIsland_segment_attribute_xy = 21;
+  lowCurbsPresent = 22;
+  rumbleStripPresent = 23;
+  audibleSignalingPresent = 24;
+  adaptiveTimingPresent = 25;
+  rfSignalRequestPresent = 26;
+  partialCurbIntrusion = 27;
+  taperToLeft = 28;
+  taperToRight = 29;
+  taperToCenterLine = 30;
+  parallelParking = 31;
+  headInParking = 32;
+  freeParking = 33;
+  timeRestrictionsOnParking = 34;
+  costToPark = 35;
+  midBlockCurbPresent = 36;
+  unEvenPavementPresent = 37;
+}
+
+
+
+message Connection {
+  ConnectingLane connectingLane = 1;
+  IntersectionReferenceID remoteIntersection = 2;
+  uint32 signalGroup = 3;
+  uint32 userClass = 4;
+  uint32 connectionID = 5;
+}
+message ConnectingLane {
+  uint32 lane = 1;
+  string maneuver = 2;
+}
+message SignalControlZone {
+  Zone zone = 1;
+}
+message Zone {
+
+}
+message RoadSegment {
+  string name = 1;
+  RoadSegmentReferenceID id = 2;
+  uint32 revision = 3;
+  Position3D refPoint = 4;
+  uint32 laneWidth = 5;
+  repeated RegulatorySpeedLimit speedLimits = 6;
+  repeated GenericLane roadLaneSet = 7;
+  repeated Regional regional = 8;
+}
+
+
+message RoadSegmentReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+
+message DataParameters {
+  string processMethod = 1;
+  string processAgency = 2;
+  string lastCheckedDate = 3;
+  string geoidUsed = 4;
+}
+message RestrictionClassAssignment {
+  uint32 id = 1;
+  repeated RestrictionUserType users = 2;
+}
+message RestrictionUserType {
+  oneof restrictionUserTypeUsers {
+    RestrictionAppliesTo basicType = 1;
+    RegionalSequence regional = 2;
+  }
+}
+message RegionalSequence {
+  repeated Regional regional = 1;
+}
+enum RestrictionAppliesTo {
+  none_restriction_applies_to = 0;
+  equippedTransit = 1;
+  equippedTaxis = 2;
+  equippedOther = 3;
+  emissionCompliant = 4;
+  equippedBicycle = 5;
+  weightCompliant = 6;
+  heightCompliant = 7;
+  pedestrians = 8;
+  slowMovingPersons = 9;
+  wheelchairUsers = 10;
+  visualDisabilities = 11;
+  audioDisabilities = 12;
+  otherUnknownDisabilities = 13;
+}

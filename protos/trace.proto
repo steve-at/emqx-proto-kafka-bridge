@@ -1,0 +1,14 @@
+syntax = "proto3";
+package at.srfg.flowmotion.trajectories.proto;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.flowmotion.trajectories.proto";
+
+message Trace {
+  repeated TraceEntry trace_list = 1;
+  map<string, uint64> additional_traces = 2;
+}
+message TraceEntry {
+  string name = 1;
+  uint64 timestamp = 2;
+}

@@ -1,0 +1,450 @@
+syntax = "proto3";
+package at.srfg.cits.beta.cpm;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.cpm";
+option java_outer_classname = "CpmMessage";
+
+message CPM {
+  ItsPduHeader header = 1;
+  CollectivePerceptionMessage cpm = 2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion = 1;
+  uint32 messageID = 2;
+  uint32 stationID = 3;
+}
+message CollectivePerceptionMessage {
+  uint32 generationDeltaTime = 1;
+  CpmParameters cpmParameters = 2;
+}
+message CpmParameters {
+  CpmManagementContainer managementContainer = 1;
+  StationDataContainer stationDataContainer = 2;
+  repeated PerceptionData perceptionData = 3;
+}
+message CpmManagementContainer {
+  uint32 stationType = 1;
+  MessageSegmentInfo messageSegmentInfo = 2;
+  ReferencePosition referencePosition = 3;
+}
+message MessageSegmentInfo {
+  uint32 totalMsgSegments = 1;
+  uint32 thisSegmentNum = 2;
+}
+message ReferencePosition {
+  int32 latitude = 1;
+  int32 longitude = 2;
+  PosConfidenceEllipse positionConfidenceEllipse = 3;
+  Altitude altitude = 4;
+}
+message PosConfidenceEllipse {
+  uint32 semiMajorConfidence = 1;
+  uint32 semiMinorConfidence = 2;
+  uint32 semiMajorOrientation = 3;
+}
+message Altitude {
+  int32 altitudeValue = 1;
+  AltitudeConfidence altitudeConfidence = 2;
+}
+enum AltitudeConfidence {
+  alt_000_01 = 0;
+  alt_000_02 = 1;
+  alt_000_05 = 2;
+  alt_000_10 = 3;
+  alt_000_20 = 4;
+  alt_000_50 = 5;
+  alt_001_00 = 6;
+  alt_002_00 = 7;
+  alt_005_00 = 8;
+  alt_010_00 = 9;
+  alt_020_00 = 10;
+  alt_050_00 = 11;
+  alt_100_00 = 12;
+  alt_200_00 = 13;
+  outOfRange = 14;
+  unavailable = 15;
+}
+message StationDataContainer {
+  uint32 containerId = 1;
+  oneof containerData {
+    OriginatingVehicleContainer originatingStationVehicleContainer = 2;
+    OriginatingStationRSUContainerWrapper originatingStationRSUContainer = 3;
+  }
+
+}
+message OriginatingStationRSUContainerWrapper {
+  oneof originatingStationRSUContainer {
+    IntersectionReferenceID intersectionReferenceId = 2;
+    RoadSegmentReferenceID roadSegmentReferenceId = 3;
+  }
+
+}
+
+message PerceptionData {
+  uint32 containerId = 1;
+  oneof containerData {
+    SensorInformationWrapper sensorInformationCpmContainer = 2;
+    PerceivedObjectContainer perceivedObjectCpmContainer = 3;
+    FreeSpaceAddendumWrapper freeSpaceAddendumCpmContainer = 4;
+  }
+
+}
+message SensorInformationWrapper {
+  repeated SensorInformation sensorInformationCpmContainer = 1;
+}
+message FreeSpaceAddendumWrapper {
+  repeated FreeSpaceAddendum freeSpaceAddendumCpmContainer = 1;
+}
+
+message OriginatingVehicleContainer {
+  Heading heading = 1;
+  Speed speed = 2;
+  WGS84Angle vehicleOrientationAngle = 3;
+  DriveDirection driveDirection = 4;
+  LongitudinalAcceleration longitudinalAcceleration = 5;
+  LateralAcceleration lateralAcceleration = 6;
+  VerticalAcceleration verticalAcceleration = 7;
+  YawRate yawRate = 8;
+  CartesianAngle pitchAngle = 9;
+  CartesianAngle rollAngle = 10;
+  VehicleLength vehicleLength = 11;
+  uint32 vehicleWidth = 12;
+  uint32 vehicleHeight = 13;
+  repeated TrailerData trailerDataContainer = 14;
+}
+
+message Heading {
+  uint32 headingValue = 1;
+  uint32 headingConfidence = 2;
+}
+message Speed {
+  uint32 speedValue = 1;
+  uint32 speedConfidence = 2;
+}
+message WGS84Angle {
+  uint32 value = 1;
+  uint32 confidence = 2;
+}
+enum DriveDirection {
+  forward = 0;
+  backward = 1;
+  unavailable_DriveDirection = 2;
+}
+message LongitudinalAcceleration {
+  int32 longitudinalAccelerationValue = 1;
+  uint32 longitudinalAccelerationConfidence = 2;
+}
+message LateralAcceleration {
+  int32 lateralAccelerationValue = 1;
+  uint32 lateralAccelerationConfidence = 2;
+}
+message VerticalAcceleration {
+  int32 verticalAccelerationValue = 1;
+  uint32 verticalAccelerationConfidence = 2;
+}
+message YawRate {
+  int32 yawRateValue = 1;
+  YawRateConfidence yawRateConfidence = 2;
+}
+enum YawRateConfidence {
+  degSec_000_01 = 0;
+  degSec_000_05 = 1;
+  degSec_000_10 = 2;
+  degSec_001_00 = 3;
+  degSec_005_00 = 4;
+  degSec_010_00 = 5;
+  degSec_100_00 = 6;
+  outOfRange_YawRateConfidence = 7;
+  unavailable_YawRateConfidence = 8;
+}
+message CartesianAngle {
+  uint32 value = 1;
+  uint32 confidence = 2;
+}
+message VehicleLength {
+  uint32 vehicleLengthValue = 1;
+  VehicleLengthConfidenceIndication vehicleLengthConfidenceIndication = 2;
+}
+enum VehicleLengthConfidenceIndication {
+  noTrailerPresent = 0;
+  trailerPresentWithKnownLength = 1;
+  trailerPresentWithUnknownLength = 2;
+  trailerPresenceIsUnknown = 3;
+  unavailable_VehicleLengthConfidenceIndication = 4;
+}
+message TrailerData {
+  uint32 refPointId = 1;
+  uint32 hitchPointOffset = 2;
+  uint32 frontOverhang = 3;
+  uint32 rearOverhang = 4;
+  uint32 trailerWidth = 5;
+  CartesianAngle hitchAngle = 6;
+}
+message OriginatingStationRSUContainer {
+  IntersectionReferenceID intersectionReferenceId = 1;
+  RoadSegmentReferenceID roadSegmentReferenceId = 2;
+}
+message IntersectionReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+message RoadSegmentReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+message SensorInformation {
+  uint32 sensorID = 1;
+  uint32 type = 2;
+  oneof detectionArea {
+    AreaCircular stationarySensorCircular = 3;
+    AreaEllipse stationarySensorEllipse = 4;
+    AreaPolygon stationarySensorPolygon = 5;
+    AreaRadial stationarySensorRadial = 6;
+    AreaRectangle stationarySensorRectangle = 7;
+    VehicleSensor vehicleSensor = 8;
+  }
+
+  uint32 freeSpaceConfidence = 9;
+}
+
+
+message DetectionArea {
+  AreaCircular stationarySensorCircular = 1;
+  AreaEllipse stationarySensorEllipse = 2;
+  AreaPolygon stationarySensorPolygon = 3;
+  AreaRadial stationarySensorRadial = 4;
+  AreaRectangle stationarySensorRectangle = 5;
+  VehicleSensor vehicleSensor = 6;
+}
+message AreaCircular {
+  OffsetPoint nodeCenterPoint = 1;
+  uint32 radius = 2;
+}
+message OffsetPoint {
+  oneof nodeOffsetPointxy {
+    Node_LLmD_64b node_LatLon = 1;
+    Node_XY_20b node_XY1 = 2;
+    Node_XY_22b node_XY2 = 3;
+    Node_XY_24b node_XY3 = 4;
+    Node_XY_26b node_XY4 = 5;
+    Node_XY_28b node_XY5 = 6;
+    Node_XY_32b node_XY6 = 7;
+    Regional regional = 8;
+  }
+
+  oneof nodeOffsetPointZ {
+    int32 node_Z1 = 9;
+    int32 node_Z2 = 10;
+    int32 node_Z3 = 11;
+    int32 node_Z4 = 12;
+    int32 node_Z5 = 13;
+    int32 node_Z6 = 14;
+  }
+
+}
+
+
+
+
+message NodeOffsetPointxy {
+  Node_LLmD_64b node_LatLon = 1;
+  Node_XY_20b node_XY1 = 2;
+  Node_XY_22b node_XY2 = 3;
+  Node_XY_24b node_XY3 = 4;
+  Node_XY_26b node_XY4 = 5;
+  Node_XY_28b node_XY5 = 6;
+  Node_XY_32b node_XY6 = 7;
+  Regional regional = 8;
+}
+message Node_LLmD_64b {
+  int32 lon = 1;
+  int32 lat = 2;
+}
+message Node_XY_20b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_22b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_24b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_26b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_28b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Node_XY_32b {
+  int32 x = 1;
+  int32 y = 2;
+}
+message Regional {
+
+}
+message NodeOffsetPointZ {
+  int32 node_Z1 = 1;
+  int32 node_Z2 = 2;
+  int32 node_Z3 = 3;
+  int32 node_Z4 = 4;
+  int32 node_Z5 = 5;
+  int32 node_Z6 = 6;
+}
+message AreaEllipse {
+  OffsetPoint nodeCenterPoint = 1;
+  uint32 semiMinorRangeLength = 2;
+  uint32 semiMajorRangeLength = 3;
+  uint32 semiMajorRangeOrientation = 4;
+  uint32 semiHeight = 5;
+}
+message AreaPolygon {
+  repeated OffsetPoint polyPointList = 1;
+}
+
+message AreaRadial {
+  uint32 range = 1;
+  uint32 stationaryHorizontalOpeningAngleStart = 2;
+  uint32 stationaryHorizontalOpeningAngleEnd = 3;
+  uint32 verticalOpeningAngleStart = 4;
+  uint32 verticalOpeningAngleEnd = 5;
+  OffsetPoint sensorPositionOffset = 6;
+  int32 sensorHeight = 7;
+}
+message AreaRectangle {
+  OffsetPoint nodeCenterPoint = 1;
+  uint32 semiMajorRangeLength = 2;
+  uint32 semiMinorRangeLength = 3;
+  uint32 semiMajorRangeOrientation = 4;
+  uint32 semiHeight = 5;
+}
+message VehicleSensor {
+  uint32 refPointId = 1;
+  int32 xSensorOffset = 2;
+  int32 ySensorOffset = 3;
+  uint32 zSensorOffset = 4;
+  repeated VehicleSensorProperties vehicleSensorPropertyList = 5;
+}
+
+message VehicleSensorProperties {
+  uint32 range = 1;
+  uint32 horizontalOpeningAngleStart = 2;
+  uint32 horizontalOpeningAngleEnd = 3;
+  uint32 verticalOpeningAngleStart = 4;
+  uint32 verticalOpeningAngleEnd = 5;
+}
+message PerceivedObjectContainer {
+  uint32 numberOfPerceivedObjects = 1;
+  repeated PerceivedObject perceivedObjects = 2;
+}
+message PerceivedObject {
+  uint32 objectID = 1;
+  int32 timeOfMeasurement = 2;
+  uint32 objectConfidence = 3;
+  ObjectDistance xDistance = 4;
+  ObjectDistance yDistance = 5;
+  ObjectDistance zDistance = 6;
+  SpeedExtended xSpeed = 7;
+  SpeedExtended ySpeed = 8;
+  SpeedExtended zSpeed = 9;
+  Acceleration xAcceleration = 10;
+  Acceleration yAcceleration = 11;
+  Acceleration zAcceleration = 12;
+  CartesianAngle yawAngle = 13;
+  ObjectDimension planarObjectDimension1 = 14;
+  ObjectDimension planarObjectDimension2 = 15;
+  ObjectDimension verticalObjectDimension = 16;
+  uint32 objectRefPoint = 17;
+  uint32 objectAge = 18;
+  repeated uint32 sensorIDList = 19;
+  uint32 dynamicStatus = 20;
+  repeated ObjectClassWithConfidence classification = 21;
+  MatchedPosition matchedPosition = 22;
+}
+
+
+message ObjectDistance {
+  int32 value = 1;
+  uint32 confidence = 2;
+}
+message SpeedExtended {
+  int32 value = 1;
+  uint32 confidence = 2;
+}
+message Acceleration {
+  int32 value = 1;
+  uint32 confidence = 2;
+}
+message ObjectDimension {
+  uint32 value = 1;
+  uint32 confidence = 2;
+}
+message ObjectClassWithConfidence {
+  oneof objectClass {
+    uint32 animalSubclass = 1;
+    uint32 otherSubclass = 2;
+    uint32 personSubclass = 3;
+    uint32 vehicleSubclass = 4;
+  }
+
+  uint32 confidence = 5;
+}
+
+
+message ObjectClass {
+  uint32 animalSubclass = 1;
+  uint32 otherSubclass = 2;
+  uint32 personSubclass = 3;
+  uint32 vehicleSubclass = 4;
+}
+message MatchedPosition {
+  uint32 laneID = 1;
+  LongitudinalLanePosition longitudinalLanePosition = 2;
+}
+message LongitudinalLanePosition {
+  uint32 longitudinalLanePositionValue = 1;
+  uint32 longitudinalLanePositionConfidence = 2;
+}
+message FreeSpaceAddendum {
+  uint32 freeSpaceConfidence = 1;
+  oneof freeSpaceArea {
+    AreaCircular freeSpaceCircular = 2;
+    AreaEllipse freeSpaceEllipse = 3;
+    AreaPolygon freeSpacePolygon = 4;
+    AreaRectangle freeSpaceRectangle = 5;
+  }
+
+  repeated uint32 sensorIDList = 6;
+  bool shadowingApplies = 7;
+}
+
+
+
+message FreeSpaceArea {
+  AreaCircular freeSpaceCircular = 1;
+  AreaEllipse freeSpaceEllipse = 2;
+  AreaPolygon freeSpacePolygon = 3;
+  AreaRectangle freeSpaceRectangle = 4;
+}
+message PerceptionDataChoices {
+  repeated SensorInformation sensorInformationCpmContainer = 1;
+  PerceivedObjectContainer perceivedObjectCpmContainer = 2;
+  repeated FreeSpaceAddendum freeSpaceAddendumCpmContainer = 3;
+}
+
+
+message StationDataContainerChoices {
+  OriginatingVehicleContainer originatingStationVehicleContainer = 1;
+  oneof originatingStationRSUContainer {
+    IntersectionReferenceID intersectionReferenceId = 2;
+    RoadSegmentReferenceID roadSegmentReferenceId = 3;
+  }
+
+}
+
+

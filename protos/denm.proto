@@ -1,0 +1,259 @@
+syntax = "proto3";
+package at.srfg.cits.beta.denm;
+
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.denm";
+option java_outer_classname = "DenmMessage";
+
+message DENM {
+  ItsPduHeader header = 1;
+  DecentralizedEnvironmentalNotificationMessage denm = 2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion = 1;
+  uint32 messageID = 2;
+  uint32 stationID = 3;
+}
+message DecentralizedEnvironmentalNotificationMessage {
+  ManagementContainer management = 1;
+  SituationContainer situation = 2;
+  LocationContainer location = 3;
+  AlacarteContainer alacarte = 4;
+}
+message ManagementContainer {
+  ActionID actionID = 1;
+  uint64 detectionTime = 2;
+  uint64 referenceTime = 3;
+  Termination termination = 4;
+  ReferencePosition eventPosition = 5;
+  RelevanceDistance relevanceDistance = 6;
+  RelevanceTrafficDirection relevanceTrafficDirection = 7;
+  uint32 validityDuration = 8;
+  uint32 transmissionInterval = 9;
+  uint32 stationType = 10;
+}
+message ActionID {
+  uint32 originatingStationID = 1;
+  uint32 sequenceNumber = 2;
+}
+enum Termination {
+  isCancellation = 0;
+  isNegation = 1;
+}
+message ReferencePosition {
+  int32 latitude = 1;
+  int32 longitude = 2;
+  PosConfidenceEllipse positionConfidenceEllipse = 3;
+  Altitude altitude = 4;
+}
+message PosConfidenceEllipse {
+  uint32 semiMajorConfidence = 1;
+  uint32 semiMinorConfidence = 2;
+  uint32 semiMajorOrientation = 3;
+}
+message Altitude {
+  int32 altitudeValue = 1;
+  AltitudeConfidence altitudeConfidence = 2;
+}
+enum AltitudeConfidence {
+  alt_000_01 = 0;
+  alt_000_02 = 1;
+  alt_000_05 = 2;
+  alt_000_10 = 3;
+  alt_000_20 = 4;
+  alt_000_50 = 5;
+  alt_001_00 = 6;
+  alt_002_00 = 7;
+  alt_005_00 = 8;
+  alt_010_00 = 9;
+  alt_020_00 = 10;
+  alt_050_00 = 11;
+  alt_100_00 = 12;
+  alt_200_00 = 13;
+  outOfRange = 14;
+  unavailable = 15;
+}
+enum RelevanceDistance {
+  lessThan50m = 0;
+  lessThan100m = 1;
+  lessThan200m = 2;
+  lessThan500m = 3;
+  lessThan1000m = 4;
+  lessThan5km = 5;
+  lessThan10km = 6;
+  over10km = 7;
+}
+enum RelevanceTrafficDirection {
+  allTrafficDirections = 0;
+  upstreamTraffic = 1;
+  downstreamTraffic = 2;
+  oppositeTraffic = 3;
+}
+message SituationContainer {
+  uint32 informationQuality = 1;
+  CauseCode eventType = 2;
+  CauseCode linkedCause = 3;
+  repeated EventPoint eventHistory = 4;
+}
+
+message CauseCode {
+  uint32 causeCode = 1;
+  uint32 subCauseCode = 2;
+}
+message EventPoint {
+  DeltaReferencePosition eventPosition = 1;
+  int32 eventDeltaTime = 2;
+  uint32 informationQuality = 3;
+}
+message DeltaReferencePosition {
+  int32 deltaLatitude = 1;
+  int32 deltaLongitude = 2;
+  int32 deltaAltitude = 3;
+}
+message LocationContainer {
+  Speed eventSpeed = 1;
+  Heading eventPositionHeading = 2;
+  repeated PathHistory traces = 3;
+  RoadType roadType = 4;
+}
+message PathHistory {repeated PathPoint pathPoint = 1;
+}
+message Speed {
+  uint32 speedValue = 1;
+  uint32 speedConfidence = 2;
+}
+message Heading {
+  uint32 headingValue = 1;
+  uint32 headingConfidence = 2;
+}
+message PathPoint {
+  DeltaReferencePosition pathPosition = 1;
+  int32 pathDeltaTime = 2;
+}
+enum RoadType {
+  urban_NoStructuralSeparationToOppositeLanes = 0;
+  urban_WithStructuralSeparationToOppositeLanes = 1;
+  nonUrban_NoStructuralSeparationToOppositeLanes = 2;
+  nonUrban_WithStructuralSeparationToOppositeLanes = 3;
+}
+message AlacarteContainer {
+  int32 lanePosition = 1;
+  ImpactReductionContainer impactReduction = 2;
+  int32 externalTemperature = 3;
+  RoadWorksContainerExtended roadWorks = 4;
+  PositioningSolution positioningSolution = 5;
+  StationaryVehicleContainer stationaryVehicle = 6;
+}
+message ImpactReductionContainer {
+  uint32 heightLonCarrLeft = 1;
+  uint32 heightLonCarrRight = 2;
+  uint32 posLonCarrLeft = 3;
+  uint32 posLonCarrRight = 4;
+  repeated uint32 positionOfPillars = 5;
+  uint32 posCentMass = 6;
+  uint32 wheelBaseVehicle = 7;
+  uint32 turningRadius = 8;
+  uint32 posFrontAx = 9;
+  string positionOfOccupants = 10;
+  uint32 vehicleMass = 11;
+  RequestResponseIndication requestResponseIndication = 12;
+}
+
+enum RequestResponseIndication {
+  request = 0;
+  response = 1;
+}
+message RoadWorksContainerExtended {
+  string lightBarSirenInUse = 1;
+  ClosedLanes closedLanes = 2;
+  repeated uint32 restriction = 3;
+  uint32 speedLimit = 4;
+  CauseCode incidentIndication = 5;
+  repeated ReferencePosition recommendedPath = 6;
+  DeltaReferencePosition startingPointSpeedLimit = 7;
+  TrafficFlowRule trafficFlowRule = 8;
+  repeated ActionID referenceDenms = 9;
+}
+
+
+
+message ClosedLanes {
+  InnerhardShoulderStatus innerhardShoulderStatus = 1;
+  OuterhardShoulderStatus outerhardShoulderStatus = 2;
+  string drivingLaneStatus = 3;
+}
+enum InnerhardShoulderStatus {
+  availableForStopping_inner = 0;
+  closed_inner = 1;
+  availableForDriving_inner = 2;
+}
+enum OuterhardShoulderStatus {
+  availableForStopping_outer = 0;
+  closed_outer = 1;
+  availableForDriving_outer = 2;
+}
+enum TrafficFlowRule {
+  noPassing = 0;
+  noPassingForTrucks = 1;
+  passToRight = 2;
+  passToLeft = 3;
+}
+enum PositioningSolution {
+  noPositioningSolution = 0;
+  sGNSS = 1;
+  dGNSS = 2;
+  sGNSSplusDR = 3;
+  dGNSSplusDR = 4;
+  dR = 5;
+}
+message StationaryVehicleContainer {
+  StationarySince stationarySince = 1;
+  CauseCode stationaryCause = 2;
+  DangerousGoodsExtended carryingDangerousGoods = 3;
+  uint32 numberOfOccupants = 4;
+  VehicleIdentification vehicleIdentification = 5;
+  string energyStorageType = 6;
+}
+enum StationarySince {
+  lessThan1Minute = 0;
+  lessThan2Minutes = 1;
+  lessThan15Minutes = 2;
+  equalOrGreater15Minutes = 3;
+}
+message DangerousGoodsExtended {
+  DangerousGoodsType dangerousGoodsType = 1;
+  uint32 unNumber = 2;
+  bool elevatedTemperature = 3;
+  bool tunnelsRestricted = 4;
+  bool limitedQuantity = 5;
+  string emergencyActionCode = 6;
+  string phoneNumber = 7;
+  string companyName = 8;
+}
+enum DangerousGoodsType {
+  explosives1 = 0;
+  explosives2 = 1;
+  explosives3 = 2;
+  explosives4 = 3;
+  explosives5 = 4;
+  explosives6 = 5;
+  flammableGases = 6;
+  nonFlammableGases = 7;
+  toxicGases = 8;
+  flammableLiquids = 9;
+  flammableSolids = 10;
+  substancesLiableToSpontaneousCombustion = 11;
+  substancesEmittingFlammableGasesUponContactWithWater = 12;
+  oxidizingSubstances = 13;
+  organicPeroxides = 14;
+  toxicSubstances = 15;
+  infectiousSubstances = 16;
+  radioactiveMaterial = 17;
+  corrosiveSubstances = 18;
+  miscellaneousDangerousSubstances = 19;
+}
+message VehicleIdentification {
+  string wMInumber = 1;
+  string vDS = 2;
+}

@@ -1,0 +1,167 @@
+syntax = "proto3";
+package at.srfg.cits.common.entity.protobuf.message_forwarding;
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.message_forwarding";
+
+// The central system can ask a device (e.g. RSU)  to send out an ITS message. The device
+// should start sending out the message as soon as possible.
+// Messages that are not valid anymore (duration is over) or `timeframe.end` is
+// in the past can be deleted, all other messages should be persisted upon
+// reception, before being sent out for the first time.
+message MessageForwardRequest {
+
+  // Source which triggered the message forward request
+  string originator = 1;
+
+  // The UUID is used to uniquely identify the message.
+  string uuid = 2;
+
+  // Time at which all the values in the message have been added. So the
+  // time-stamp has to be set last in the message before encoding.
+  google.protobuf.Timestamp timestamp = 3;
+
+  // List of quadtrees defining relevance areas for the message.
+  repeated string relevance_areas = 4;
+
+  // The frequency in which to send out the
+  // data in seconds, fractional values are allowed.
+  // E.g. to send out a message twice a second (2 Hz) `repetition_rate` is 0.5.
+  double repetition_rate = 5;
+
+  // The duration to send out the message in
+  // seconds. When `duration` is 0, the message should be sent out exactly once,
+  // otherwise the message should be sent out exactly `n` times where
+  //
+  // ``n = floor((1/repetition_rate)*duration)``
+  //
+  // The duration must NOT be used when <<SendRequest>>.timeframe.stop is set.
+  uint32 duration = 6;
+
+  // For a description of the byte-encoding
+  // see <<ITSMessage>>.
+  //
+  // The bytes in message are UPER when the encoding is
+  // not given. Otherwise the message encoding can be specified as well.
+  ITSMessage message = 7;
+
+  // The message ID  (e.g. cam, denm, ...) of the received message.
+  ITSMessageID message_id = 8;
+
+  // For certain message types (e.g. DENMs) the message can be updated according
+  // to project specific rules. `update_interval` (in seconds) determines how
+  // often this message update should be performed, if `update_interval` is 0,
+  // the message is not updated.
+  uint32 update_interval = 9;
+
+  // When the message was triggered by another message the UUID of that other
+  // message is added here.
+  string in_reply_to = 10;
+}
+
+// Message representation for ingress message coming from RSUs.
+message IngressRSUForwarding {
+
+  // Source which triggered the message forward (e.g. unique id of the originating RSU)
+  string originator = 1;
+
+  // The UUID is used to uniquely identify the message.
+  string uuid = 2;
+
+  // Time at which all the values in the message have been added. So the
+  // time-stamp has to be set last in the message before encoding.
+  google.protobuf.Timestamp timestamp = 3;
+
+  // For a description of the byte-encoding
+  // see <<ITSMessage>>.
+  //
+  // The bytes in message are UPER when the encoding is
+  // not given. Otherwise the message encoding can be specified as well.
+  ITSMessage message = 4;
+
+  // The message ID  (e.g. cam, denm, ...) of the received message.
+  ITSMessageID message_id = 5;
+
+  // When the message was triggered by another message the UUID of that other
+  // message is added here.
+  string in_reply_to = 6;
+}
+
+// A (possibly) deduplicated ITS message. When the message is sent to the
+// central system for the first time the message AND the hash are sent. After
+// that the message can be left out and only the hash sent to reduce data
+// traffic on the interface.
+// The deduplication is ONLY done when sending messages to the central system.
+message ITSMessage {
+
+  // When the message has been sent already, leave the message empty and
+  // only send the SHA256 hash.
+  // For a description of the byte-encoding see <<ITS Message Formats>>.
+  bytes message = 1;
+
+  // SHA256 hash of the UPER message, when this message has already been sent
+  // previously or in the same <<ITSMessage>> message the message itself can be
+  // empty and only the SHA256 value sent.
+  bytes hash = 2;
+
+  // The encoding, default is UPER.
+  Encoding encoding = 3;
+}
+
+// The currently supported ITS messages are the ones listed in
+// https://www.etsi.org/deliver/etsi_ts/102800_102899/10289402/01.03.01_60/ts_10289402v010301p.pdf[ETSI TS 102 894-2 V1.3.1]
+// but projects can restrict the valid set of ITS messages (for example only
+// allowing `denm(1)` and `cam(2)`).
+enum ITSMessageID {
+  // Decentralized Environmental Notification Message (DENM) as specified in
+  // ETSI EN 302 637-3 [i.3].
+  denm = 0;
+  // Cooperative Awareness Message (CAM) as specified in ETSI EN 302 637-2
+  // [i.2].
+  cam = 1;
+  // Point of Interest message as specified in ETSI TS 101 556-1 [i.11].
+  poi = 2;
+  // Signal Phase And Timing (SPAT) message as specified in SAE J2735 [i.12]
+  // and in ETSI TS 103 301 [i.17].
+  spatem = 3;
+  // MAP message as specified in SAE J2735 [i.12] and in ETSI TS 103 301
+  // [i.17].
+  mapem = 4;
+  // In Vehicle Information (IVI) message as defined in ISO TS 19321 [i.13].
+  ivim = 5;
+  // Electric vehicle recharging spot reservation message, as defined in ETSI
+  // TS 101 556-3 [i.14].
+  ev_rsr = 6;
+  // Tyre Information System (TIS) and Tyre Pressure Gauge (TPG)
+  // interoperability, as specified in ETSI TS 101 556-2 [i.15].
+  tistpgtransaction = 7;
+  // Traffic light Signal Request Message as specified in ETSI TS 103 301
+  // [i.17].
+  srem = 8;
+  // Traffic Light Signal Request Status Message as specified in ETSI TS 103
+  // 301 [i.17].
+  ssem = 9;
+  // Electrical Vehicle Charging Spot Notification message as specified in ETSI
+  // TS 101 556-1 [i.11].
+  evcsn = 10;
+  // Services Announcement Extended Message as specified in ETSI TS 102 890-1
+  // [i.19].
+  saem = 11;
+  // Radio Technical Commission for Maritime Services (RTCM) Message as
+  // specified in ETSI TS 103 301 [i.17].
+  rtcmem = 12;
+  // Collective Perception Message (CPM) as
+  // specified in ETSI TR 103 562.
+  cpm = 13;
+  reserved 14 to 255;
+}
+
+// In advanced messages the payload can be encoded in different formats.
+enum Encoding {
+  UPER = 0;
+  XER = 1;
+  PROTO = 2;
+  SIGNEDUPER = 3;
+}

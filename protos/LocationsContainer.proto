@@ -1,0 +1,56 @@
+syntax = "proto3";
+package at.srfg.flowmotion.trajectories.proto;
+
+import "trace.proto";
+
+option java_package = "at.srfg.flowmotion.trajectories.proto";
+option java_multiple_files = true;
+
+message LocationsContainer {
+  string trajectory_id = 1;
+  uint64 timestamp = 2;
+  string source = 6;
+  string owner = 7;
+  map<string, Value> tags = 8;
+  repeated Location locations = 9;
+  Trace trace = 25;
+}
+message Location {
+  sint32 t = 1;
+  double x = 2;
+  double y = 3;
+  sint32 z = 4;
+  map<string, Value> tags = 5;
+  map<string, NumericValue> additional_numerics = 6;
+  map<string, TimeSeriesFragment> time_series_fragments = 7;
+}
+message Value {
+  oneof value_type {
+    string string_value = 1;
+    float float_value = 2;
+    double double_value = 3;
+    uint32 pos_int_value = 4;
+    uint32 neg_int_value = 5;
+    uint64 pos_long_value = 6;
+    uint64 neg_long_value = 7;
+    bool bool_value = 8;
+    string json_value = 9;
+  }
+}
+message NumericValue {
+  oneof value_type {
+    float float_value = 1;
+    double double_value = 2;
+    uint32 pos_int_value = 3;
+    uint32 neg_int_value = 4;
+    uint64 pos_long_value = 5;
+    uint64 neg_long_value = 6;
+  }
+}
+message TimeSeriesFragment {
+  repeated TimeSeriesEntry time_series_entry = 1;
+}
+message TimeSeriesEntry {
+  sint64 t = 1;
+  map<string, NumericValue> values = 2;
+}

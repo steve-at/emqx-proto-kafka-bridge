@@ -1,0 +1,99 @@
+syntax = "proto3";
+package at.srfg.flowmotion.trajectories.proto;
+
+import "trace.proto";
+option java_multiple_files = true;
+option java_package = "at.srfg.flowmotion.trajectories.proto";
+
+message CitsMessageWrapper {
+
+  // id of the RSU
+  string station_id = 1;
+
+  // The currently supported ITS messages are the ones listed in
+  // https://www.etsi.org/deliver/etsi_ts/102800_102899/10289402/01.03.01_60/ts_10289402v010301p.pdf[ETSI TS 102 894-2 V1.3.1]
+  // but projects can restrict the valid set of ITS messages (for example only
+  // allowing `denm(1)` and `cam(2)`).
+  ITSMessageID message_id = 2;
+  // The UUID is used to uniquely identify the message.
+  // header property oder wollen wir das aufnehmen, wenn ja dann könnte man optional ein replay_to aufnehmen
+  string uuid = 3;
+
+  // the message provider eg. (kapsch, gevas, c-its,...)
+  string provider = 4;
+
+  // Timestamp from the Message Forwarding Proto represented in u64
+  uint64 timestamp = 5;
+
+  // The serialization format ist versioned. Zero means, no Versioning exists. (eg. Json without schema)
+  uint32 format_version = 6;
+  // The uri where the schema can be obtained. Might be from the apicur schema registry
+  string schema_uri = 7;
+
+  // The actual C-ITS message
+  oneof payload {
+    SerializedMessage serialized_message = 8;
+  }
+  // When the message was triggered by another message the UUID of that other
+  // message is added here.
+  string in_reply_to = 9;
+  // field for additional conetent, e.g. for tracing Messages
+  Trace trace = 25;
+}
+// The bytes of the message with information for the deserialization
+message SerializedMessage {
+  Serialization serialization = 1;
+  bytes payload = 2;
+}
+
+// The way the data is serialized. JSON might be with or without schema
+enum Serialization {
+  JSON = 0;
+  PROTO = 1;
+  XML = 2;
+  UPER = 3;
+}
+enum ITSMessageID {
+  // Decentralized Environmental Notification Message (DENM) as specified in
+  // ETSI EN 302 637-3 [i.3].
+  denm = 0;
+  // Cooperative Awareness Message (CAM) as specified in ETSI EN 302 637-2
+  // [i.2].
+  cam = 1;
+  // Point of Interest message as specified in ETSI TS 101 556-1 [i.11].
+  poi = 2;
+  // Signal Phase And Timing (SPAT) message as specified in SAE J2735 [i.12]
+  // and in ETSI TS 103 301 [i.17].
+  spatem = 3;
+  // MAP message as specified in SAE J2735 [i.12] and in ETSI TS 103 301
+  // [i.17].
+  mapem = 4;
+  // In Vehicle Information (IVI) message as defined in ISO TS 19321 [i.13].
+  ivim = 5;
+  // Electric vehicle recharging spot reservation message, as defined in ETSI
+  // TS 101 556-3 [i.14].
+  ev_rsr = 6;
+  // Tyre Information System (TIS) and Tyre Pressure Gauge (TPG)
+  // interoperability, as specified in ETSI TS 101 556-2 [i.15].
+  tistpgtransaction = 7;
+  // Traffic light Signal Request Message as specified in ETSI TS 103 301
+  // [i.17].
+  srem = 8;
+  // Traffic Light Signal Request Status Message as specified in ETSI TS 103
+  // 301 [i.17].
+  ssem = 9;
+  // Electrical Vehicle Charging Spot Notification message as specified in ETSI
+  // TS 101 556-1 [i.11].
+  evcsn = 10;
+  // Services Announcement Extended Message as specified in ETSI TS 102 890-1
+  // [i.19].
+  saem = 11;
+  // Radio Technical Commission for Maritime Services (RTCM) Message as
+  // specified in ETSI TS 103 301 [i.17].
+  rtcmem = 12;
+  // Collective Perception Message (CPM) as
+  // specified in ETSI TR 103 562.
+  cpm = 13;
+  reserved 14 to 255;
+}
+

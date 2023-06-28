@@ -1,0 +1,114 @@
+syntax = "proto3";
+package at.srfg.cits.beta.spatem;
+
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.spatem";
+option java_outer_classname = "SpatemMessage";
+
+message SPATEM {
+  ItsPduHeader header =  1;
+  SPAT spat =  2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion =  1;
+  uint32 messageID =  2;
+  uint32 stationID =  3;
+}
+message SPAT {
+  uint32 timeStamp =  1;
+  string name =  2;
+repeated IntersectionState intersections =  3;
+ repeated Regional regional =  4;
+}
+
+message IntersectionState {
+  string name =  1;
+  IntersectionReferenceID id =  2;
+  uint32 revision =  3;
+  string status =  4;
+  uint32 moy =  5;
+  uint32 timeStamp =  6;
+repeated uint32 enabledLanes =  7;
+repeated MovementState states =  8;
+repeated ConnectionManeuverAssist maneuverAssistList =  9;
+ repeated Regional regional =  10;
+}
+
+
+
+message IntersectionReferenceID {
+  uint32 region =  1;
+  uint32 id =  2;
+}
+message MovementState {
+  string movementName =  1;
+  uint32 signalGroup =  2;
+repeated MovementEvent state_time_speed =  3;
+repeated ConnectionManeuverAssist maneuverAssistList =  4;
+ repeated Regional regional =  5;
+}
+
+
+message MovementEvent {
+  EventState eventState =  1;
+  TimeChangeDetails timing =  2;
+repeated AdvisorySpeed speeds =  3;
+ repeated Regional regional =  4;
+}
+
+enum EventState {
+unavailable_event_state = 0;
+dark = 1;
+stop_Then_Proceed = 2;
+stop_And_Remain = 3;
+pre_Movement = 4;
+permissive_Movement_Allowed = 5;
+protected_Movement_Allowed = 6;
+permissive_clearance = 7;
+protected_clearance = 8;
+caution_Conflicting_Traffic = 9;
+}
+message TimeChangeDetails {
+  uint32 startTime =  1;
+  uint32 minEndTime =  2;
+  uint32 maxEndTime =  3;
+  uint32 likelyTime =  4;
+  uint32 confidence =  5;
+  uint32 nextTime =  6;
+}
+message AdvisorySpeed {
+  Type type =  1;
+  uint32 speed =  2;
+  Confidence confidence =  3;
+  uint32 distance =  4;
+  uint32 class =  5;
+ repeated Regional regional =  6;
+}
+enum Type {
+  none = 0;
+  greenwave = 1;
+  ecoDrive = 2;
+  transit = 3;
+}
+enum Confidence {
+  unavailable_confidence = 0;
+  prec100ms = 1;
+  prec10ms = 2;
+  prec5ms = 3;
+  prec1ms = 4;
+  prec0_1ms = 5;
+  prec0_05ms = 6;
+  prec0_01ms = 7;
+}
+message Regional {
+
+}
+message ConnectionManeuverAssist {
+  uint32 connectionID =  1;
+  uint32 queueLength =  2;
+  uint32 availableStorageLength =  3;
+  bool waitOnStop =  4;
+  bool pedBicycleDetect =  5;
+ repeated Regional regional =  6;
+}

@@ -1,0 +1,328 @@
+syntax = "proto3";
+package at.srfg.cits.beta.cam;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.cam";
+option java_outer_classname = "CamMessage";
+
+message CAM {
+  ItsPduHeader header =  1;
+  CoopAwareness cam =  2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion =  1;
+  uint32 messageID =  2;
+  uint32 stationID =  3;
+}
+message CoopAwareness {
+  uint32 generationDeltaTime =  1;
+  CamParameters camParameters =  2;
+}
+message CamParameters {
+  BasicContainer basicContainer =  1;
+  oneof highFrequencyContainer {
+    BasicVehicleContainerHighFrequency basicVehicleContainerHighFrequency =  2;
+    RSUContainerHighFrequency rsuContainerHighFrequency =  3;
+  }
+
+  oneof lowFrequencyContainer {
+    BasicVehicleContainerLowFrequency basicVehicleContainerLowFrequency =  4;
+  }
+
+  oneof specialVehicleContainer {
+    DangerousGoodsContainer dangerousGoodsContainer =  5;
+    EmergencyContainer emergencyContainer =  6;
+    PublicTransportContainer publicTransportContainer =  7;
+    RescueContainer rescueContainer =  8;
+    RoadWorksContainerBasic roadWorksContainerBasic =  9;
+    SafetyCarContainer safetyCarContainer =  10;
+    SpecialTransportContainer specialTransportContainer =  11;
+  }
+
+}
+
+
+
+
+
+
+message BasicContainer {
+  uint32 stationType =  1;
+  ReferencePosition referencePosition =  2;
+}
+message ReferencePosition {
+  int32 latitude =  1;
+  int32 longitude =  2;
+  PosConfidenceEllipse positionConfidenceEllipse =  3;
+  Altitude altitude =  4;
+}
+message PosConfidenceEllipse {
+  uint32 semiMajorConfidence =  1;
+  uint32 semiMinorConfidence =  2;
+  uint32 semiMajorOrientation =  3;
+}
+message Altitude {
+  int32 altitudeValue =  1;
+  AltitudeConfidence altitudeConfidence =  2;
+}
+enum AltitudeConfidence {
+  alt_000_01 = 0;
+  alt_000_02 = 1;
+  alt_000_05 = 2;
+  alt_000_10 = 3;
+  alt_000_20 = 4;
+  alt_000_50 = 5;
+  alt_001_00 = 6;
+  alt_002_00 = 7;
+  alt_005_00 = 8;
+  alt_010_00 = 9;
+  alt_020_00 = 10;
+  alt_050_00 = 11;
+  alt_100_00 = 12;
+  alt_200_00 = 13;
+  outOfRange = 14;
+  unavailable = 15;
+}
+message HighFrequencyContainer {
+  BasicVehicleContainerHighFrequency basicVehicleContainerHighFrequency =  1;
+  RSUContainerHighFrequency rsuContainerHighFrequency =  2;
+}
+message BasicVehicleContainerHighFrequency {
+  Heading heading =  1;
+  Speed speed =  2;
+  DriveDirection driveDirection =  3;
+  VehicleLength vehicleLength =  4;
+  uint32 vehicleWidth =  5;
+  LongitudinalAcceleration longitudinalAcceleration =  6;
+  Curvature curvature =  7;
+  CurvatureCalculationMode curvatureCalculationMode =  8;
+  YawRate yawRate =  9;
+  string accelerationControl =  10;
+  int32 lanePosition =  11;
+  SteeringWheelAngle steeringWheelAngle =  12;
+  LateralAcceleration lateralAcceleration =  13;
+  VerticalAcceleration verticalAcceleration =  14;
+  uint32 performanceClass =  15;
+  CenDsrcTollingZone cenDsrcTollingZone =  16;
+}
+message Heading {
+  uint32 headingValue =  1;
+  uint32 headingConfidence =  2;
+}
+message Speed {
+  uint32 speedValue =  1;
+  uint32 speedConfidence =  2;
+}
+enum DriveDirection {
+  forward = 0;
+  backward = 1;
+  unavailable_drive_direction = 2;
+}
+message VehicleLength {
+  uint32 vehicleLengthValue =  1;
+  VehicleLengthConfidenceIndication vehicleLengthConfidenceIndication =  2;
+}
+enum VehicleLengthConfidenceIndication {
+  noTrailerPresent = 0;
+  trailerPresentWithKnownLength = 1;
+  trailerPresentWithUnknownLength = 2;
+  trailerPresenceIsUnknown = 3;
+  unavailable_vehicle_length_confidence_indication = 4;
+}
+message LongitudinalAcceleration {
+  int32 longitudinalAccelerationValue =  1;
+  uint32 longitudinalAccelerationConfidence =  2;
+}
+message Curvature {
+  int32 curvatureValue =  1;
+  CurvatureConfidence curvatureConfidence =  2;
+}
+enum CurvatureConfidence {
+  onePerMeter_0_00002 = 0;
+  onePerMeter_0_0001 = 1;
+  onePerMeter_0_0005 = 2;
+  onePerMeter_0_002 = 3;
+  onePerMeter_0_01 = 4;
+  onePerMeter_0_1 = 5;
+  outOfRange_curvature_confidence = 6;
+  unavailable_curvature_confidence = 7;
+}
+enum CurvatureCalculationMode {
+  yawRateUsed = 0;
+  yawRateNotUsed = 1;
+  unavailable_curvature_calculation_mode = 2;
+}
+message YawRate {
+  int32 yawRateValue =  1;
+  YawRateConfidence yawRateConfidence =  2;
+}
+enum YawRateConfidence {
+  degSec_000_01 = 0;
+  degSec_000_05 = 1;
+  degSec_000_10 = 2;
+  degSec_001_00 = 3;
+  degSec_005_00 = 4;
+  degSec_010_00 = 5;
+  degSec_100_00 = 6;
+  outOfRange_yaw_rate_confidence = 7;
+  unavailable_yaw_rate_confidence = 8;
+}
+message SteeringWheelAngle {
+  int32 steeringWheelAngleValue =  1;
+  uint32 steeringWheelAngleConfidence =  2;
+}
+message LateralAcceleration {
+  int32 lateralAccelerationValue =  1;
+  uint32 lateralAccelerationConfidence =  2;
+}
+message VerticalAcceleration {
+  int32 verticalAccelerationValue =  1;
+  uint32 verticalAccelerationConfidence =  2;
+}
+message CenDsrcTollingZone {
+  int32 protectedZoneLatitude =  1;
+  int32 protectedZoneLongitude =  2;
+  uint32 cenDsrcTollingZoneID =  3;
+}
+message RSUContainerHighFrequency {
+  repeated ProtectedCommunicationZone protectedCommunicationZonesRSU =  1;
+}
+
+message ProtectedCommunicationZone {
+  ProtectedZoneType protectedZoneType =  1;
+  uint64 expiryTime =  2;
+  int32 protectedZoneLatitude =  3;
+  int32 protectedZoneLongitude =  4;
+  int32 protectedZoneRadius =  5;
+  uint32 protectedZoneID =  6;
+}
+enum ProtectedZoneType {
+  permanentCenDsrcTolling = 0;
+  temporaryCenDsrcTolling = 1;
+}
+message LowFrequencyContainer {
+  BasicVehicleContainerLowFrequency basicVehicleContainerLowFrequency =  1;
+}
+message BasicVehicleContainerLowFrequency {
+  VehicleRole vehicleRole =  1;
+  string exteriorLights =  2;
+  repeated PathPoint pathHistory =  3;
+}
+
+enum VehicleRole {
+  default_vehicle_role = 0;
+  publicTransport = 1;
+  specialTransport = 2;
+  dangerousGoods = 3;
+  roadWork = 4;
+  rescue = 5;
+  emergency = 6;
+  safetyCar = 7;
+  agriculture = 8;
+  commercial = 9;
+  military = 10;
+  roadOperator = 11;
+  taxi = 12;
+  reserved1 = 13;
+  reserved2 = 14;
+  reserved3 = 15;
+}
+message PathPoint {
+  DeltaReferencePosition pathPosition =  1;
+  int32 pathDeltaTime =  2;
+}
+message DeltaReferencePosition {
+  int32 deltaLatitude =  1;
+  int32 deltaLongitude =  2;
+  int32 deltaAltitude =  3;
+}
+message SpecialVehicleContainer {
+  DangerousGoodsContainer dangerousGoodsContainer =  1;
+  EmergencyContainer emergencyContainer =  2;
+  PublicTransportContainer publicTransportContainer =  3;
+  RescueContainer rescueContainer =  4;
+  RoadWorksContainerBasic roadWorksContainerBasic =  5;
+  SafetyCarContainer safetyCarContainer =  6;
+  SpecialTransportContainer specialTransportContainer =  7;
+}
+message DangerousGoodsContainer {
+  DangerousGoodsBasic dangerousGoodsBasic =  1;
+}
+enum DangerousGoodsBasic {
+  explosives1 = 0;
+  explosives2 = 1;
+  explosives3 = 2;
+  explosives4 = 3;
+  explosives5 = 4;
+  explosives6 = 5;
+  flammableGases = 6;
+  nonFlammableGases = 7;
+  toxicGases = 8;
+  flammableLiquids = 9;
+  flammableSolids = 10;
+  substancesLiableToSpontaneousCombustion = 11;
+  substancesEmittingFlammableGasesUponContactWithWater = 12;
+  oxidizingSubstances = 13;
+  organicPeroxides = 14;
+  toxicSubstances = 15;
+  infectiousSubstances = 16;
+  radioactiveMaterial = 17;
+  corrosiveSubstances = 18;
+  miscellaneousDangerousSubstances = 19;
+}
+message EmergencyContainer {
+  string lightBarSirenInUse =  1;
+  CauseCode incidentIndication =  2;
+  string emergencyPriority =  3;
+}
+message CauseCode {
+  uint32 causeCode =  1;
+  uint32 subCauseCode =  2;
+}
+message PublicTransportContainer {
+  bool embarkationStatus =  1;
+  PtActivation ptActivation =  2;
+}
+message PtActivation {
+  uint32 ptActivationType =  1;
+  string ptActivationData =  2;
+}
+message RescueContainer {
+  string lightBarSirenInUse =  1;
+}
+message RoadWorksContainerBasic {
+  uint32 roadworksSubCauseCode =  1;
+  string lightBarSirenInUse =  2;
+  ClosedLanes closedLanes =  3;
+}
+message ClosedLanes {
+  InnerhardShoulderStatus innerhardShoulderStatus =  1;
+  OuterhardShoulderStatus outerhardShoulderStatus =  2;
+  string drivingLaneStatus =  3;
+}
+enum InnerhardShoulderStatus {
+  availableForStopping_inner = 0;
+  closed_inner = 1;
+  availableForDriving_inner = 2;
+}
+enum OuterhardShoulderStatus {
+  availableForStopping_outer = 0;
+  closed_outer = 1;
+  availableForDriving_outer = 2;
+}
+message SafetyCarContainer {
+  string lightBarSirenInUse =  1;
+  CauseCode incidentIndication =  2;
+  TrafficRule trafficRule =  3;
+  uint32 speedLimit =  4;
+}
+enum TrafficRule {
+  noPassing = 0;
+  noPassingForTrucks = 1;
+  passToRight = 2;
+  passToLeft = 3;
+}
+message SpecialTransportContainer {
+  string specialTransportType =  1;
+  string lightBarSirenInUse =  2;
+}

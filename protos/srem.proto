@@ -1,0 +1,205 @@
+syntax = "proto3";
+package at.srfg.cits.beta.srem;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.srem";
+option java_outer_classname = "SremMessage";
+
+message SREM {
+  ItsPduHeader header = 1;
+  SignalRequestMessage srm = 2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion = 1;
+  uint32 messageID = 2;
+  uint32 stationID = 3;
+}
+message SignalRequestMessage {
+  uint32 timeStamp = 1;
+  uint32 second = 2;
+  uint32 sequenceNumber = 3;
+  repeated SignalRequestPackage requests = 4;
+  RequestorDescription requestor = 5;
+  repeated Regional regional = 6;
+}
+
+message SignalRequestPackage {
+  SignalRequest request = 1;
+  uint32 minute = 2;
+  uint32 second = 3;
+  uint32 duration = 4;
+  repeated Regional regional = 5;
+}
+message SignalRequest {
+  IntersectionReferenceID id = 1;
+  uint32 requestID = 2;
+  RequestType requestType = 3;
+  IntersectionAccessPoint inBoundLane = 4;
+  IntersectionAccessPoint outBoundLane = 5;
+  repeated Regional regional = 6;
+}
+
+
+message IntersectionReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+enum RequestType {
+  priorityRequestTypeReserved = 0;
+  priorityRequest = 1;
+  priorityRequestUpdate = 2;
+  priorityCancellation = 3;
+}
+message IntersectionAccessPoint {
+  oneof intersectionAccessPoint {
+    uint32 approach = 1;
+    uint32 connection = 2;
+    uint32 lane = 3;
+  }
+}
+message Regional {
+
+}
+message RequestorDescription {
+  oneof id {
+    string entityID = 1;
+    uint32 stationID = 2;
+  }
+
+  RequestorType type = 3;
+  RequestorPositionVector position = 4;
+  string name = 5;
+  string routeName = 6;
+  string transitStatus = 7;
+  TransitOccupancy transitOccupancy = 8;
+  int32 transitSchedule = 9;
+  repeated Regional regional = 10;
+}
+
+
+message Id {
+  string entityID = 1;
+  uint32 stationID = 2;
+}
+message RequestorType {
+  Role role = 1;
+  Subrole subrole = 2;
+  Request request = 3;
+  uint32 iso3883 = 4;
+  HpmsType hpmsType = 5;
+  Regional regional = 6;
+}
+enum Role {
+  basicVehicle = 0;
+  publicTransport = 1;
+  specialTransport = 2;
+  dangerousGoods = 3;
+  roadWork = 4;
+  roadRescue = 5;
+  emergency = 6;
+  safetyCar = 7;
+  none_unknown = 8;
+  truck = 9;
+  motorcycle = 10;
+  roadSideSource = 11;
+  police = 12;
+  fire = 13;
+  ambulance = 14;
+  dot = 15;
+  transit = 16;
+  slowMoving = 17;
+  stopNgo = 18;
+  cyclist = 19;
+  pedestrian = 20;
+  nonMotorized = 21;
+  military = 22;
+}
+enum Subrole {
+  requestSubRoleUnKnown = 0;
+  requestSubRole1 = 1;
+  requestSubRole2 = 2;
+  requestSubRole3 = 3;
+  requestSubRole4 = 4;
+  requestSubRole5 = 5;
+  requestSubRole6 = 6;
+  requestSubRole7 = 7;
+  requestSubRole8 = 8;
+  requestSubRole9 = 9;
+  requestSubRole10 = 10;
+  requestSubRole11 = 11;
+  requestSubRole12 = 12;
+  requestSubRole13 = 13;
+  requestSubRole14 = 14;
+  requestSubRoleReserved = 15;
+}
+enum Request {
+  requestImportanceLevelUnKnown = 0;
+  requestImportanceLevel1 = 1;
+  requestImportanceLevel2 = 2;
+  requestImportanceLevel3 = 3;
+  requestImportanceLevel4 = 4;
+  requestImportanceLevel5 = 5;
+  requestImportanceLevel6 = 6;
+  requestImportanceLevel7 = 7;
+  requestImportanceLevel8 = 8;
+  requestImportanceLevel9 = 9;
+  requestImportanceLevel10 = 10;
+  requestImportanceLevel11 = 11;
+  requestImportanceLevel12 = 12;
+  requestImportanceLevel13 = 13;
+  requestImportanceLevel14 = 14;
+  requestImportanceReserved = 15;
+}
+enum HpmsType {
+  none = 0;
+  unknown = 1;
+  special = 2;
+  moto = 3;
+  car = 4;
+  carOther = 5;
+  bus = 6;
+  axleCnt2 = 7;
+  axleCnt3 = 8;
+  axleCnt4 = 9;
+  axleCnt4Trailer = 10;
+  axleCnt5Trailer = 11;
+  axleCnt6Trailer = 12;
+  axleCnt5MultiTrailer = 13;
+  axleCnt6MultiTrailer = 14;
+  axleCnt7MultiTrailer = 15;
+}
+message RequestorPositionVector {
+  Position3D position = 1;
+  uint32 heading = 2;
+  TransmissionAndSpeed speed = 3;
+}
+message Position3D {
+  int32 lat = 1;
+  int32 long = 2;
+  int32 elevation = 3;
+  repeated Regional regional = 4;
+}
+message TransmissionAndSpeed {
+  Transmisson transmisson = 1;
+  uint32 speed = 2;
+}
+enum Transmisson {
+  neutral = 0;
+  park = 1;
+  forwardGears = 2;
+  reverseGears = 3;
+  reserved1 = 4;
+  reserved2 = 5;
+  reserved3 = 6;
+  unavailable = 7;
+}
+enum TransitOccupancy {
+  occupancyUnknown = 0;
+  occupancyEmpty = 1;
+  occupancyVeryLow = 2;
+  occupancyLow = 3;
+  occupancyMed = 4;
+  occupancyHigh = 5;
+  occupancyNearlyFull = 6;
+  occupancyFull = 7;
+}

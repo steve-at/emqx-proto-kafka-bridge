@@ -1,0 +1,874 @@
+syntax = "proto3";
+package at.srfg.cits.beta.ivim;
+
+option java_multiple_files = true;
+option java_package = "at.srfg.cits.common.entity.protobuf.cits.beta.ivim";
+option java_outer_classname = "IvimMessage";
+
+message IVIM {
+  ItsPduHeader header = 1;
+  IviStructure ivi = 2;
+}
+message ItsPduHeader {
+  uint32 protocolVersion = 1;
+  uint32 messageID = 2;
+  uint32 stationID = 3;
+}
+message IviStructure {
+  IviManagementContainer mandatory = 1;
+  repeated IviContainer optional = 2;
+}
+message IviContainer {
+  oneof iviContainer {
+    AvcPartSequence avc = 1;
+    GicPartSequence giv = 2;
+    GeographicLocationContainer glc = 3;
+    LayoutContainer lac = 4;
+    MapLocationContainer mlc = 5;
+    RccPartSequence rcc = 6;
+    RscPartSequence rsc = 7;
+    TcPartSequence tc = 8;
+  };
+}
+message IviManagementContainer {
+  Provider serviceProviderId = 1;
+  int32 iviIdentificationNumber = 2;
+  uint64 timeStamp = 3;
+  uint64 validFrom = 4;
+  uint64 validTo = 5;
+  repeated int32 connectedIviStructures = 6;
+  uint32 iviStatus = 7;
+  repeated ActionID connectedDenms = 8;
+}
+message TcPartSequence {
+  repeated TcPart tcParts = 1;
+}
+message RscPartSequence {
+  repeated RscPart rscParts = 1;
+}
+message RccPartSequence {
+  repeated RccPart rccParts = 1;
+}
+message Provider {
+  string countryCode = 1;
+  uint32 providerIdentifier = 2;
+}
+message ActionID {
+  uint32 originatingStationID = 1;
+  uint32 sequenceNumber = 2;
+}
+
+
+
+
+message AvcPartSequence {
+  repeated AvcPart avcParts = 1;
+}
+
+message AvcPart {
+  repeated int32 detectionZoneIds = 1;
+  repeated int32 relevanceZoneIds = 2;
+  uint32 direction = 3;
+  repeated int32 applicableLanes = 4;
+  repeated CompleteVehicleCharacteristics vehicleCharacteristics = 5;
+  repeated AutomatedVehicleRule automatedVehicleRules = 6;
+  repeated PlatooningRule platooningRules = 7;
+}
+
+
+
+
+
+
+message CompleteVehicleCharacteristics {
+  TractorCharacteristics tractor = 1;
+  repeated TrailerCharacteristics trailer = 2;
+  TractorCharacteristics train = 3;
+}
+
+message TractorCharacteristics {
+  repeated VehicleCharacteristicsFixValues equalTo = 1;
+  repeated VehicleCharacteristicsFixValues notEqualTo = 2;
+  repeated VehicleCharacteristicsRanges ranges = 3;
+}
+message VehicleCharacteristicsFixValues {
+  oneof vehicleCharacteristicsFixValues {
+    uint32 engineCharacteristics = 1;
+    EuVehicleCategoryCodeWrapper euVehicleCategoryCode = 2;
+    EnvironmentalCharacteristics euroAndCo2value = 3;
+    uint32 iso3833VehicleType = 4;
+    LoadType loadType = 5;
+    uint32 simpleVehicleType = 6;
+    Usage usage = 7;
+  }
+}
+
+message EqualTo {
+
+}
+
+
+message EuVehicleCategoryCodeWrapper {
+  oneof euVehicleCategoryCode{
+    EuVehicleCategoryL euVehicleCategoryL = 1;
+    EuVehicleCategoryM euVehicleCategoryM = 2;
+    EuVehicleCategoryN euVehicleCategoryN = 3;
+    EuVehicleCategoryO euVehicleCategoryO = 4;
+    uint32 euVehilcleCategoryG = 5;
+    uint32 euVehilcleCategoryT = 6;
+  }
+}
+enum EuVehicleCategoryL {
+  l1 = 0;
+  l2 = 1;
+  l3 = 2;
+  l4 = 3;
+  l5 = 4;
+  l6 = 5;
+  l7 = 6;
+}
+enum EuVehicleCategoryM {
+  m1 = 0;
+  m2 = 1;
+  m3 = 2;
+}
+enum EuVehicleCategoryN {
+  n1 = 0;
+  n2 = 1;
+  n3 = 2;
+}
+enum EuVehicleCategoryO {
+  o1 = 0;
+  o2 = 1;
+  o3 = 2;
+  o4 = 3;
+}
+message EnvironmentalCharacteristics {
+  EuroValue euroValue = 1;
+  CopValue copValue = 2;
+}
+enum EuroValue {
+  noEntry = 0;
+  euro_1 = 1;
+  euro_2 = 2;
+  euro_3 = 3;
+  euro_4 = 4;
+  euro_5 = 5;
+  euro_6 = 6;
+  reservedForUse1 = 7;
+  reservedForUse2 = 8;
+  reservedForUse3 = 9;
+  reservedForUse4 = 10;
+  reservedForUse5 = 11;
+  reservedForUse6 = 12;
+  reservedForUse7 = 13;
+  reservedForUse8 = 14;
+  eev = 15;
+}
+enum CopValue {
+  noEntry_cop_value = 0;
+  co2class1 = 1;
+  co2class2 = 2;
+  co2class3 = 3;
+  co2class4 = 4;
+  co2class5 = 5;
+  co2class6 = 6;
+  co2class7 = 7;
+  reservedforUse = 8;
+}
+message LoadType {
+  int32 goodsType = 1;
+  DangerousGoodsType dangerousGoodsType = 2;
+  string specialTransportType = 3;
+}
+enum DangerousGoodsType {
+  explosives1 = 0;
+  explosives2 = 1;
+  explosives3 = 2;
+  explosives4 = 3;
+  explosives5 = 4;
+  explosives6 = 5;
+  flammableGases = 6;
+  nonFlammableGases = 7;
+  toxicGases = 8;
+  flammableLiquids = 9;
+  flammableSolids = 10;
+  substancesLiableToSpontaneousCombustion = 11;
+  substancesEmittingFlammableGasesUponContactWithWater = 12;
+  oxidizingSubstances = 13;
+  organicPeroxides = 14;
+  toxicSubstances = 15;
+  infectiousSubstances = 16;
+  radioactiveMaterial = 17;
+  corrosiveSubstances = 18;
+  miscellaneousDangerousSubstances = 19;
+}
+enum Usage {
+  default = 0;
+  publicTransport = 1;
+  specialTransport = 2;
+  dangerousGoods = 3;
+  roadWork = 4;
+  rescue = 5;
+  emergency = 6;
+  safetyCar = 7;
+  agriculture = 8;
+  commercial = 9;
+  military = 10;
+  roadOperator = 11;
+  taxi = 12;
+  reserved1 = 13;
+  reserved2 = 14;
+  reserved3 = 15;
+}
+message NotEqualTo {
+  uint32 engineCharacteristics = 1;
+  oneof euVehicleCategoryCode {
+    EuVehicleCategoryL euVehicleCategoryL = 2;
+    EuVehicleCategoryM euVehicleCategoryM = 3;
+    EuVehicleCategoryN euVehicleCategoryN = 4;
+    EuVehicleCategoryO euVehicleCategoryO = 5;
+    uint32 euVehilcleCategoryG = 6;
+    uint32 euVehilcleCategoryT = 7;
+  }
+
+  EnvironmentalCharacteristics euroAndCo2value = 8;
+  uint32 iso3833VehicleType = 9;
+  LoadType loadType = 10;
+  uint32 simpleVehicleType = 11;
+  Usage usage = 12;
+}
+
+message VehicleCharacteristicsRanges {
+  uint32 comparisonOperator = 1;
+  oneof limits {
+    AxleWeightLimits axleWeightLimits = 2;
+    DieselEmissionValues dieselEmissionValues = 3;
+    ExhaustEmissionValues exhaustEmissionValues = 4;
+    uint32 numberOfAxles = 5;
+    PassengerCapacity passengerCapacity = 6;
+    SoundLevel soundLevel = 7;
+    VehicleDimensions vehicleDimensions = 8;
+    VehicleWeightLimits vehicleWeightLimits = 9;
+  }
+
+}
+
+
+message Limits {
+  AxleWeightLimits axleWeightLimits = 1;
+  DieselEmissionValues dieselEmissionValues = 2;
+  ExhaustEmissionValues exhaustEmissionValues = 3;
+  uint32 numberOfAxles = 4;
+  PassengerCapacity passengerCapacity = 5;
+  SoundLevel soundLevel = 6;
+  VehicleDimensions vehicleDimensions = 7;
+  VehicleWeightLimits vehicleWeightLimits = 8;
+}
+message AxleWeightLimits {
+  uint32 maxLadenweightOnAxle1 = 1;
+  uint32 maxLadenweightOnAxle2 = 2;
+  uint32 maxLadenweightOnAxle3 = 3;
+  uint32 maxLadenweightOnAxle4 = 4;
+  uint32 maxLadenweightOnAxle5 = 5;
+}
+message DieselEmissionValues {
+  Particulate particulate = 1;
+  uint32 absorptionCoeff = 2;
+}
+message Particulate {
+  UnitType unitType = 1;
+  uint32 value = 2;
+}
+message ExhaustEmissionValues {
+  UnitType unitType = 1;
+  uint32 emissionCO = 2;
+  uint32 emissionHC = 3;
+  uint32 emissionNOX = 4;
+  uint32 emissionHCNOX = 5;
+}
+enum UnitType {
+  mg_km = 0;
+  mg_kWh = 1;
+}
+message PassengerCapacity {
+  uint32 numberOfSeats = 1;
+  uint32 numberOfStandingPlaces = 2;
+}
+message SoundLevel {
+  uint32 soundstationary = 1;
+  uint32 sounddriveby = 2;
+}
+message VehicleDimensions {
+  uint32 vehicleLengthOverall = 1;
+  uint32 vehicleHeigthOverall = 2;
+  uint32 vehicleWidthOverall = 3;
+}
+message VehicleWeightLimits {
+  uint32 vehicleMaxLadenWeight = 1;
+  uint32 vehicleTrainMaximumWeight = 2;
+  uint32 vehicleWeightUnladen = 3;
+}
+message TrailerCharacteristics {
+  repeated VehicleCharacteristicsFixValues equalTo = 1;
+  repeated VehicleCharacteristicsFixValues notEqualTo = 2;
+  repeated VehicleCharacteristicsRanges ranges = 3;
+}
+
+
+message AutomatedVehicleRule {
+  uint32 priority = 1;
+  repeated uint32 allowedSaeAutomationLevels = 2;
+  uint32 minGapBetweenVehicles = 3;
+  uint32 recGapBetweenVehicles = 4;
+  uint32 automatedVehicleMaxSpeedLimit = 5;
+  uint32 automatedVehicleMinSpeedLimit = 6;
+  uint32 automatedVehicleSpeedRecommendation = 7;
+  repeated RSCode roadSignCodes = 8;
+  repeated Text extraText = 9;
+}
+
+
+
+message RSCode {
+  int32 layoutComponentId = 1;
+  oneof code {
+    AnyCatalogue anyCatalogue = 2;
+    ISO14823Code iso14823 = 3;
+    uint32 itisCodes = 4;
+    VcCode viennaConvention = 5;
+  }
+
+}
+
+
+message Code {
+  AnyCatalogue anyCatalogue = 1;
+  ISO14823Code iso14823 = 2;
+  uint32 itisCodes = 3;
+  VcCode viennaConvention = 4;
+}
+message AnyCatalogue {
+  Provider owner = 1;
+  uint32 version = 2;
+  uint32 pictogramCode = 3;
+  uint32 value = 4;
+  uint32 unit = 5;
+  repeated ISO14823Attribute attributes = 6;
+}
+message ISO14823Attribute {
+  oneof attributes {
+    Distance dbv = 1;
+    InternationalSign_destinationInformation ddd = 2;
+    uint32 dfl = 3;
+    InternationalSign_applicablePeriod dtm = 4;
+    InternationalSign_applicablePeriod edt = 5;
+    uint32 roi = 6;
+    InternationalSign_speedLimits spe = 7;
+    InternationalSign_applicableVehicleDimensions ved = 8;
+  };
+}
+
+message Attributes {
+  Distance dbv = 1;
+  InternationalSign_destinationInformation ddd = 2;
+  uint32 dfl = 3;
+  InternationalSign_applicablePeriod dtm = 4;
+  InternationalSign_applicablePeriod edt = 5;
+  uint32 roi = 6;
+  InternationalSign_speedLimits spe = 7;
+  InternationalSign_applicableVehicleDimensions ved = 8;
+}
+message Distance {
+  uint32 value = 1;
+  uint32 unit = 2;
+}
+message InternationalSign_destinationInformation {
+  uint32 junctionDirection = 1;
+  uint32 roundaboutCwDirection = 2;
+  uint32 roundaboutCcwDirection = 3;
+  repeated DDD_IO ioList = 4;
+}
+
+message DDD_IO {
+  uint32 arrowDirection = 1;
+  repeated DestinationPlace destPlace = 2;
+  repeated DestinationRoad destRoad = 3;
+  uint32 roadNumberIdentifier = 4;
+  uint32 streetName = 5;
+  string streetNameText = 6;
+  DistanceOrDuration distanceToDivergingPoint = 7;
+  DistanceOrDuration distanceToDestinationPlace = 8;
+}
+
+
+message DestinationPlace {
+  int32 destType = 1;
+  GddStructure destRSCode = 2;
+  string destBlob = 3;
+  uint32 placeNameIdentification = 4;
+  string placeNameText = 5;
+}
+message GddStructure {
+  PictogramCodeGdd pictogramCode = 1;
+  repeated GddAttribute attributes = 2;
+}
+message GddAttribute {
+  oneof attributes {
+    Distance dbv = 1;
+    InternationalSign_destinationInformation ddd = 2;
+    uint32 dfl = 3;
+    InternationalSign_applicablePeriod dtm = 4;
+    InternationalSign_applicablePeriod edt = 5;
+    uint32 nol = 6;
+    uint32 roi = 7;
+    InternationalSign_section set = 8;
+    InternationalSign_speedLimits spe = 9;
+    InternationalSign_applicableVehicleDimensions ved = 10;
+  };
+}
+message PictogramCodeGdd {
+  string countryCode = 1;
+  oneof serviceCategoryCode {
+    TrafficSignPictogram trafficSignPictogram = 2;
+    PublicFacilitiesPictogram publicFacilitiesPictogram = 3;
+    AmbientOrRoadConditionPictogram ambientOrRoadConditionPictogram = 4;
+  }
+  PictogramCategoryCode pictogramCategoryCode = 5;
+}
+
+
+
+
+message InternationalSign_applicablePeriod {
+  Year year = 1;
+  MonthDay month_day = 2;
+  string repeatingPeriodDayTypes = 3;
+  HourMinutes hourMinutes = 4;
+  string dateRangeOfWeek = 5;
+  HoursMinutes durationHourMinute = 6;
+}
+message Year {
+  int32 yearRangeStartYear = 1;
+  int32 yearRangeEndYear = 2;
+}
+message MonthDay {
+  MonthDay dateRangeStartMonthDay = 1;
+  MonthDay dateRangeEndMonthDay = 2;
+}
+message HourMinutes {
+  HoursMinutes timeRangeStartTime = 1;
+  HoursMinutes timeRangeEndTime = 2;
+}
+message HoursMinutes {
+  int32 hours = 1;
+  int32 mins = 2;
+}
+
+message InternationalSign_section {
+  Distance startingPointLength = 1;
+  Distance continuityLength = 2;
+}
+message InternationalSign_speedLimits {
+  uint32 speedLimitMax = 1;
+  uint32 speedLimitMin = 2;
+  uint32 unit = 3;
+}
+message InternationalSign_applicableVehicleDimensions {
+  Distance vehicleHeight = 1;
+  Distance vehicleWidth = 2;
+  Distance vehicleLength = 3;
+  Weight vehicleWeight = 4;
+}
+message Weight {
+  uint32 value = 1;
+  uint32 unit = 2;
+}
+message DestinationRoad {
+  int32 derType = 1;
+  uint32 roadNumberIdentifier = 2;
+  string roadNumberText = 3;
+}
+message DistanceOrDuration {
+  uint32 value = 1;
+  uint32 unit = 2;
+}
+
+message ISO14823Code {
+  PictogramCodeISO14823 pictogramCode = 1;
+  repeated ISO14823Attribute attributes = 2;
+}
+
+message PictogramCodeISO14823 {
+  string countryCode = 1;
+  oneof serviceCategoryCode {
+    TrafficSignPictogram trafficSignPictogram = 2;
+    PublicFacilitiesPictogram publicFacilitiesPictogram = 3;
+    AmbientOrRoadConditionPictogram ambientOrRoadConditionPictogram = 4;
+  }
+
+  PictogramCategoryCode pictogramCategoryCode = 5;
+}
+
+message PictogramCategoryCode {
+  int32 nature = 1;
+  int32 serialNumber = 2;
+}
+
+enum TrafficSignPictogram {
+  dangerWarning = 0;
+    regulatory = 1;
+    informative = 2;
+}
+enum PublicFacilitiesPictogram {
+    publicFacilities = 0;
+}
+enum AmbientOrRoadConditionPictogram {
+    ambientCondition = 0;
+    roadCondition = 1;
+}
+
+message VcCode {
+  uint32 roadSignClass = 1;
+  uint32 roadSignCode = 2;
+  uint32 vcOption = 3;
+  repeated InternationalSign_applicablePeriod validity = 4;
+  uint32 value = 5;
+  uint32 unit = 6;
+}
+
+message Text {
+  int32 layoutComponentId = 1;
+  string language = 2;
+  string textContent = 3;
+}
+message PlatooningRule {
+  uint32 priority = 1;
+  repeated uint32 allowedSaeAutomationLevels = 2;
+  uint32 maxNoOfVehicles = 3;
+  uint32 maxLenghtOfPlatoon = 4;
+  uint32 minGapBetweenVehicles = 5;
+  uint32 platoonMaxSpeedLimit = 6;
+  uint32 platoonMinSpeedLimit = 7;
+  uint32 platoonSpeedRecommendation = 8;
+  repeated RSCode roadSignCodes = 9;
+  repeated Text extraText = 10;
+}
+
+
+message GicPartSequence {
+  repeated GicPart gicParts = 1;
+}
+
+message GicPart {
+  repeated int32 detectionZoneIds = 1;
+  oneof its_Rrid {
+      uint32 content = 2;
+      Ext1Wrapper extension = 3;
+}
+
+
+  repeated int32 relevanceZoneIds = 4;
+  uint32 direction = 5;
+  repeated int32 driverAwarenessZoneIds = 6;
+  uint32 minimumAwarenessTime = 7;
+  repeated int32 applicableLanes = 8;
+  uint32 iviType = 9;
+  uint32 iviPurpose = 10;
+  int32 laneStatus = 11;
+  repeated CompleteVehicleCharacteristics vehicleCharacteristics = 12;
+  uint32 driverCharacteristics = 13;
+  int32 layoutId = 14;
+  int32 preStoredlayoutId = 15;
+  repeated RSCode roadSignCodes = 16;
+  repeated Text extraText = 17;
+  }
+
+message Ext1Wrapper {
+    oneof ext1 {
+    uint32 content = 2;
+    Ext2Wrapper extension = 3;
+  }
+}
+message Ext2Wrapper {
+  oneof ext2 {
+    uint32 content = 2;
+    int32 extension = 3;
+  }
+}
+
+
+message GeographicLocationContainer {
+  ReferencePosition referencePosition = 1;
+  uint64 referencePositionTime = 2;
+  Heading referencePositionHeading = 3;
+  Speed referencePositionSpeed = 4;
+  repeated GlcPart parts = 5;
+}
+
+message ReferencePosition {
+  int32 latitude = 1;
+  int32 longitude = 2;
+  PosConfidenceEllipse positionConfidenceEllipse = 3;
+  Altitude altitude = 4;
+}
+message PosConfidenceEllipse {
+  uint32 semiMajorConfidence = 1;
+  uint32 semiMinorConfidence = 2;
+  uint32 semiMajorOrientation = 3;
+}
+message Altitude {
+  int32 altitudeValue = 1;
+  AltitudeConfidence altitudeConfidence = 2;
+}
+enum AltitudeConfidence {
+  alt_000_01 = 0;
+  alt_000_02 = 1;
+  alt_000_05 = 2;
+  alt_000_10 = 3;
+  alt_000_20 = 4;
+  alt_000_50 = 5;
+  alt_001_00 = 6;
+  alt_002_00 = 7;
+  alt_005_00 = 8;
+  alt_010_00 = 9;
+  alt_020_00 = 10;
+  alt_050_00 = 11;
+  alt_100_00 = 12;
+  alt_200_00 = 13;
+  outOfRange = 14;
+  unavailable = 15;
+}
+message Heading {
+  uint32 headingValue = 1;
+  uint32 headingConfidence = 2;
+}
+message Speed {
+  uint32 speedValue = 1;
+  uint32 speedConfidence = 2;
+}
+message GlcPart {
+  int32 zoneId = 1;
+  int32 laneNumber = 2;
+  uint32 zoneExtension = 3;
+  uint32 zoneHeading = 4;
+  oneof zone {
+    AreaWrapper area = 5;
+    ComputedSegment computedSegment = 6;
+    Segment segment = 7;
+  }
+
+}
+message AreaWrapper {
+  oneof area {
+    AbsolutePositionWrapper absolutePositions = 2;
+    AbsolutePositionWAltitudeWrapper absolutePositionsWithAltitude = 3;
+    DeltaPositionWrapper deltaPositions = 4;
+    DeltaReferencePositionWrapper deltaPositionsWithAltitude = 5;
+  }
+
+}
+
+message Zone {
+  oneof area {
+    AbsolutePositionWrapper absolutePositions = 1;
+    AbsolutePositionWAltitudeWrapper absolutePositionsWithAltitude = 2;
+    DeltaPositionWrapper deltaPositions = 3;
+    DeltaReferencePositionWrapper deltaPositionsWithAltitude = 4;
+  }
+
+  ComputedSegment computedSegment = 5;
+  Segment segment = 6;
+}
+message AbsolutePositionWrapper {
+  repeated AbsolutePosition absolutePositions = 1;
+}
+message AbsolutePositionWAltitudeWrapper {
+  repeated AbsolutePositionWAltitude absolutePositionsWithAltitude = 1;
+}
+message DeltaPositionWrapper {
+  repeated DeltaPosition deltaPositions = 1;
+}
+message DeltaReferencePositionWrapper {
+  repeated DeltaReferencePosition deltaPositionsWithAltitude = 1;
+}
+
+message Area {
+  repeated AbsolutePosition absolutePositions = 1;
+  repeated AbsolutePositionWAltitude absolutePositionsWithAltitude = 2;
+  repeated DeltaPosition deltaPositions = 3;
+  repeated DeltaReferencePosition deltaPositionsWithAltitude = 4;
+}
+
+
+
+
+message AbsolutePosition {
+  int32 latitude = 1;
+  int32 longitude = 2;
+}
+message AbsolutePositionWAltitude {
+  int32 latitude = 1;
+  int32 longitude = 2;
+  Altitude altitude = 3;
+}
+
+message DeltaPosition {
+  int32 deltaLatitude = 1;
+  int32 deltaLongitude = 2;
+}
+message DeltaReferencePosition {
+  int32 deltaLatitude = 1;
+  int32 deltaLongitude = 2;
+  int32 deltaAltitude = 3;
+}
+message ComputedSegment {
+  int32 zoneId = 1;
+  int32 laneNumber = 2;
+  uint32 laneWidth = 3;
+  int32 offsetDistance = 4;
+  DeltaReferencePosition offsetPosition = 5;
+}
+
+message Segment {
+  oneof line {
+    AbsolutePositionWrapper absolutePositions = 1;
+    AbsolutePositionWAltitudeWrapper absolutePositionsWithAltitude = 2;
+    DeltaPositionWrapper deltaPositions = 3;
+    DeltaReferencePositionWrapper deltaPositionsWithAltitude = 4;
+  }
+
+  uint32 laneWidth = 5;
+}
+
+
+message Line {
+  repeated AbsolutePosition absolutePositions = 1;
+  repeated AbsolutePositionWAltitude absolutePositionsWithAltitude = 2;
+  repeated DeltaPosition deltaPositions = 3;
+  repeated DeltaReferencePosition deltaPositionsWithAltitude = 4;
+}
+
+
+
+
+
+
+message LayoutContainer {
+  int32 layoutId = 1;
+  uint32 height = 2;
+  uint32 width = 3;
+  repeated LayoutComponent layoutComponents = 4;
+}
+
+message LayoutComponent {
+  int32 layoutComponentId = 1;
+  uint32 height = 2;
+  uint32 width = 3;
+  uint32 x = 4;
+  uint32 y = 5;
+  uint32 textScripting = 6;
+}
+message MapLocationContainer {
+  oneof reference {
+    IntersectionReferenceID intersection = 1;
+    RoadSegmentReferenceID roadsegment = 2;
+  }
+
+  repeated MlcPart parts = 3;
+}
+
+
+
+message Reference {
+  IntersectionReferenceID intersection = 1;
+  RoadSegmentReferenceID roadsegment = 2;
+}
+message IntersectionReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+message RoadSegmentReferenceID {
+  uint32 region = 1;
+  uint32 id = 2;
+}
+message MlcPart {
+  int32 zoneId = 1;
+  repeated uint32 laneIds = 2;
+}
+
+message RccPart {
+  repeated int32 relevanceZoneIds = 1;
+  RoadType roadType = 2;
+  repeated LaneInformation laneConfiguration = 3;
+}
+
+
+enum RoadType {
+  urban_NoStructuralSeparationToOppositeLanes = 0;
+  urban_WithStructuralSeparationToOppositeLanes = 1;
+  nonUrban_NoStructuralSeparationToOppositeLanes = 2;
+  nonUrban_WithStructuralSeparationToOppositeLanes = 3;
+}
+message LaneInformation {
+  int32 laneNumber = 1;
+  uint32 direction = 2;
+  InternationalSign_applicablePeriod validity = 3;
+  uint32 laneType = 4;
+  CompleteVehicleCharacteristics laneTypeQualifier = 5;
+  int32 laneStatus = 6;
+  uint32 laneWidth = 7;
+  repeated int32 detectionZoneIds = 8;
+  repeated int32 relevanceZoneIds = 9;
+  LaneCharacteristics laneCharacteristics = 10;
+  RoadSurfaceStaticCharacteristics laneSurfaceStaticCharacteristics = 11;
+  RoadSurfaceDynamicCharacteristics laneSurfaceDynamicCharacteristics = 12;
+}
+
+
+message LaneCharacteristics {
+  int32 zoneDefinitionAccuracy = 1;
+  bool existinglaneMarkingStatus = 2;
+  int32 newlaneMarkingColour = 3;
+  int32 laneDelimitationLeft = 4;
+  int32 laneDelimitationRight = 5;
+  int32 mergingWith = 6;
+}
+message RoadSurfaceStaticCharacteristics {
+  uint32 frictionCoefficient = 1;
+  int32 material = 2;
+  int32 wear = 3;
+  int32 avBankingAngle = 4;
+}
+message RoadSurfaceDynamicCharacteristics {
+  int32 condition = 1;
+  int32 temperature = 2;
+  uint32 iceOrWaterDepth = 3;
+  uint32 treatment = 4;
+}
+message RscPart {
+  repeated int32 detectionZoneIds = 1;
+  repeated int32 relevanceZoneIds = 2;
+  uint32 direction = 3;
+  RoadSurfaceStaticCharacteristics roadSurfaceStaticCharacteristics = 4;
+  RoadSurfaceDynamicCharacteristics roadSurfaceDynamicCharacteristics = 5;
+}
+
+
+
+
+message TcPart {
+  repeated int32 detectionZoneIds = 1;
+  repeated int32 relevanceZoneIds = 2;
+  uint32 direction = 3;
+  repeated int32 driverAwarenessZoneIds = 4;
+  uint32 minimumAwarenessTime = 5;
+  repeated int32 applicableLanes = 6;
+  int32 layoutId = 7;
+  int32 preStoredlayoutId = 8;
+  repeated Text text = 9;
+  string data = 10;
+  uint32 iviType = 11;
+  int32 laneStatus = 12;
+  repeated CompleteVehicleCharacteristics vehicleCharacteristics = 13;
+}
