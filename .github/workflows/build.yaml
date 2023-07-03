@@ -37,7 +37,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
           path: |
-            _build/prod/plugrelex/proto_kafka_bridge/proto_kafka_bridge-0.1.0.tar.gz
+            _build/prod/plugrelex/proto_kafka_bridge/proto_kafka_bridge-0.2.0.tar.gz
 
   release:
     runs-on: ubuntu-20.04
