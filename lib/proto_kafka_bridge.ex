@@ -50,21 +50,27 @@ alias ElixirSense.Log
 
   @impl GenServer
   def handle_cast({:produce, msg}, state) do
-    kafka_topic = Map.get(state.topic_mapping, msg.topic)
+    message = :emqx_message.to_map(msg)
+    Logger.info("Producing message to topic: #{message.topic}")
+    kafka_topic = Map.get(state.topic_mapping, message.topic)
     schema_prefix = Map.get(state.schema_prefix, kafka_topic)
     proto_schema = Map.get(state.schema_mapping, kafka_topic)
 
-    ProtoKafkaBridge.Kafka.KafkaProducer.produce( msg, kafka_topic, schema_prefix, proto_schema, state.options)
+    ProtoKafkaBridge.Kafka.KafkaProducer.produce( message, kafka_topic, schema_prefix, proto_schema, state.options)
 
     {:noreply, state}
+
+
   end
+
 
   @impl GenServer
   def handle_cast({:map_client, msg}, state) do
-    if Map.has_key?(state.topic_mapping, msg.topic) do
+    message = :emqx_message.to_map(msg)
+    if Map.has_key?(state.topic_mapping, message.topic) do
       {:noreply, state}
     else
-      kafka_topic_name = msg.topic |> String.downcase() |> String.replace("/", ".")
+      kafka_topic_name = message.topic |> String.downcase() |> String.replace("/", ".")
 
       schema_registry_response =
         ProtoKafkaBridge.SchemaRegistry.SchemaRegistryService.fetch_schema_registry_response(
@@ -75,10 +81,10 @@ alias ElixirSense.Log
         ProtoKafkaBridge.SchemaRegistry.SchemaRegistryService.get_schema_prefix(
           kafka_topic_name,
           schema_registry_response,
-          msg.payload
+          message.payload
         )
 
-      new_topic_mapping = Map.put(state.topic_mapping, msg.topic, kafka_topic_name)
+      new_topic_mapping = Map.put(state.topic_mapping, message.topic, kafka_topic_name)
       new_schema_prefix = Map.put(state.schema_prefix, kafka_topic_name, schema_prefix)
       new_schema_mapping = Map.put(state.schema_mapping, kafka_topic_name, proto_schema)
 

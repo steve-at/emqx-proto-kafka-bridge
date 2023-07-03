@@ -1,12 +1,12 @@
 defmodule ProtoKafkaBridge.MixProject do
   use Mix.Project
 
-  @emqx_metadata_vsn "0.1.0"
+  @emqx_metadata_vsn "0.2.0"
 
   def project do
     [
       app: :proto_kafka_bridge,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       # we don't consolidate protocols to avoid clashes with other
@@ -34,6 +34,9 @@ defmodule ProtoKafkaBridge.MixProject do
         applications: [
           proto_kafka_bridge: :permanent
         ],
+        # config_providers: [
+        #   {EnvConfigProvider, ""}
+        # ],
         include_erts: false,
         steps: [
           :assemble,
@@ -104,7 +107,7 @@ defmodule ProtoKafkaBridge.MixProject do
         )
       end
     end
-
+    IO.puts("release: #{inspect(release.applications)}")
     lib_dirs =
       Enum.reduce(release.applications, [], fn {app, config}, acc ->
         if auto_included_app?(app, config, release.options) do
